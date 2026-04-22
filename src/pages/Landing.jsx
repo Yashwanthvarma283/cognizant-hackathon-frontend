@@ -11,6 +11,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
+import { GlobalSimulation } from '../components/simulation/GlobalSimulation';
 
 const mockData = [{v: 30}, {v: 50}, {v: 45}, {v: 70}, {v: 60}, {v: 90}, {v: 85}];
 
@@ -39,7 +40,7 @@ export const Landing = () => {
       <header className="container-centered" style={{ height: '5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid var(--border-light)', position: 'relative', zIndex: 1 }}>
         <div style={{ fontWeight: 700, fontSize: '18px', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Activity color="var(--color-emerald)" size={20} />
-            NODE ANALYTICS
+            GLOBALCHAIN
         </div>
       </header>
 
@@ -49,7 +50,7 @@ export const Landing = () => {
         <section style={{ maxWidth: '48rem', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-lg)' }}>
             
             <h1 className="h-hero">
-                Node Analytics: Supply Chain Resilience
+                GlobalChain: Supply Chain Resilience
             </h1>
             
             <p className="text-sub" style={{ maxWidth: '38rem' }}>
@@ -106,55 +107,8 @@ export const Landing = () => {
                     </div>
                     <div style={{ fontSize: '10px', fontWeight: 700, color: '#94a3b8' }}>PLATFORM PREVIEW: ANALYTICS CORE</div>
                 </div>
-                <div style={{ padding: '2.5rem' }}>
-                    
-                    {/* Top Stats Row */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '2.5rem' }}>
-                        {[
-                            {l: "REVENUE AT RISK", v: "$18.7M", t: "+12%", c: "var(--color-alert)"},
-                            {l: "MONITORED NODES", v: "1,248", t: "Stable", c: "var(--color-emerald)"},
-                            {l: "SIGNAL STRENGTH", v: "98.4%", t: "Nominal", c: "var(--color-emerald)"},
-                            {l: "SYSTEM UPTIME", v: "99.98%", t: "Nominal", c: "var(--color-emerald)"}
-                        ].map((stat, i) => (
-                            <div key={i} style={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '1.25rem', textAlign: 'left' }}>
-                                <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '8px' }}>{stat.l}</div>
-                                <div style={{ fontSize: '18px', fontWeight: 700, color: stat.c === 'var(--color-alert)' ? stat.c : 'var(--text-primary)' }}>{stat.v}</div>
-                                <div style={{ fontSize: '9px', fontWeight: 700, color: stat.c, marginTop: '4px' }}>{stat.t}</div>
-                            </div>
-                        ))}
-                    </div>
-                    
-                    {/* The Empty Box (Now Filled with High-Fidelity Charting) */}
-                    <div style={{ height: '320px', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div style={{ textAlign: 'left' }}>
-                                <div style={{ fontSize: '12px', fontWeight: 700 }}>Signal Stability Distribution</div>
-                                <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Metric: Node latency vs throughput density</div>
-                            </div>
-                            <div style={{ display: 'flex', gap: '1rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '9px', fontWeight: 700 }}>
-                                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--color-emerald)' }}></div> Verified Path
-                                </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '9px', fontWeight: 700 }}>
-                                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--color-alert)' }}></div> Disruption Pulse
-                                </div>
-                            </div>
-                        </div>
-
-                        <div style={{ flex: 1, position: 'relative' }}>
-                            <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={mockData}>
-                                    <Area type="monotone" dataKey="v" stroke="var(--color-signal)" fill="rgba(14, 165, 233, 0.05)" strokeWidth={3} />
-                                </AreaChart>
-                            </ResponsiveContainer>
-                            
-                            {/* SVG Overlay for "Engineered" feel */}
-                            <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-                                <path d="M 0 150 Q 150 50 300 200 T 600 100" fill="none" stroke="rgba(239, 68, 68, 0.1)" strokeWidth="1" strokeDasharray="5,5" />
-                                <circle cx="420" cy="120" r="40" fill="none" stroke="rgba(239, 68, 68, 0.2)" strokeWidth="1" />
-                            </svg>
-                        </div>
-                    </div>
+                <div style={{ padding: '0' }}>
+                    <GlobalSimulation standalone={true} />
                 </div>
             </div>
         </section>
@@ -164,7 +118,7 @@ export const Landing = () => {
       {/* Footer Minimal */}
       <footer style={{ padding: 'var(--spacing-lg) 0', borderTop: '1px solid var(--border-light)', textAlign: 'center' }}>
         <p style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>
-            © 2026 NODE ANALYTICS CORP
+            © 2026 GLOBALCHAIN CORP
         </p>
       </footer>
     </div>

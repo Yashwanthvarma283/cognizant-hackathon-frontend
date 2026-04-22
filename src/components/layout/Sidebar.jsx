@@ -14,7 +14,8 @@ import {
   Database,
   ShoppingCart,
   Bell,
-  PlusCircle
+  PlusCircle,
+  Globe
 } from 'lucide-react';
 import './layout.css';
 
@@ -31,121 +32,122 @@ export const Sidebar = ({ role, activeTab, onTabChange }) => {
   const accentColor = getRoleAccent();
   const sidebarBg = '#0f172a'; // Deep Slate 900 (Premium Charcoal)
 
+  const navItemStyle = (isActive) => ({
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    padding: '12px 16px',
+    borderRadius: '10px',
+    fontSize: '14px',
+    fontWeight: 600,
+    width: '100%',
+    textAlign: 'left',
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+    fontFamily: 'inherit',
+    position: 'relative',
+    backgroundColor: isActive ? 'rgba(255, 255, 255, 0.05)' : 'transparent',
+    color: isActive ? accentColor : '#94a3b8',
+    overflow: 'hidden'
+  });
+
+  const ActiveIndicator = () => (
+    <div style={{ 
+        position: 'absolute', left: 0, top: '25%', bottom: '25%', 
+        width: '3px', backgroundColor: accentColor, borderRadius: '0 4px 4px 0' 
+    }} />
+  );
+
   return (
-    <aside className="sidebar" style={{ backgroundColor: sidebarBg, color: '#94a3b8', borderRight: 'none' }}>
-      <div className="sidebar-header" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <div style={{ color: accentColor }}>
-          <Target size={24} strokeWidth={2.5} />
+    <aside className="sidebar" style={{ backgroundColor: sidebarBg, color: '#94a3b8', borderRight: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column' }}>
+      
+      <div className="sidebar-header" style={{ padding: '2rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div style={{ 
+            width: '40px', height: '40px', borderRadius: '10px', 
+            backgroundColor: 'rgba(255,255,255,0.03)', display: 'flex', 
+            alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.05)'
+        }}>
+          <Target size={22} color={accentColor} strokeWidth={2.5} />
         </div>
         <div>
-           <h2 style={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.02em', color: 'white' }}>Control Room</h2>
-           <div style={{ fontSize: '10px', fontWeight: 800, color: accentColor, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{role} PORTAL</div>
+           <h2 style={{ fontSize: '1.1rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'white', margin: 0 }}>GlobalChain</h2>
+           <div style={{ fontSize: '9px', fontWeight: 900, color: accentColor, textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: '2px' }}>{role} CONTROL</div>
         </div>
       </div>
       
-      <nav className="sidebar-nav" style={{ padding: '1.5rem 1rem' }}>
+      <nav className="sidebar-nav" style={{ padding: '0 1rem', display: 'flex', flexDirection: 'column', gap: '6px' }}>
         {role === 'consumer' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <button 
-              className={`nav-link ${activeTab === 'overview' ? 'active' : ''}`} 
-              onClick={() => onTabChange('overview')}
-              style={activeTab === 'overview' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
-            >
+          <>
+            <button style={navItemStyle(activeTab === 'overview')} onClick={() => onTabChange('overview')}>
+              {activeTab === 'overview' && <ActiveIndicator />}
               <Zap size={18} /> Overview
             </button>
-            <button 
-              className={`nav-link ${activeTab === 'request' ? 'active' : ''}`} 
-              onClick={() => onTabChange('request')}
-              style={activeTab === 'request' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
-            >
+            <button style={navItemStyle(activeTab === 'request')} onClick={() => onTabChange('request')}>
+              {activeTab === 'request' && <ActiveIndicator />}
               <PlusCircle size={18} /> Requisition
             </button>
-            <button 
-              className={`nav-link ${activeTab === 'inventory' ? 'active' : ''}`} 
-              onClick={() => onTabChange('inventory')}
-              style={activeTab === 'inventory' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
-            >
+            <button style={navItemStyle(activeTab === 'inventory')} onClick={() => onTabChange('inventory')}>
+              {activeTab === 'inventory' && <ActiveIndicator />}
               <Package size={18} /> Inventory List
             </button>
-            <button 
-              className={`nav-link ${activeTab === 'procurement' ? 'active' : ''}`} 
-              onClick={() => onTabChange('procurement')}
-              style={activeTab === 'procurement' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
-            >
+            <button style={navItemStyle(activeTab === 'procurement')} onClick={() => onTabChange('procurement')}>
+              {activeTab === 'procurement' && <ActiveIndicator />}
               <Truck size={18} /> Procurement Track
             </button>
-            <button 
-              className={`nav-link ${activeTab === 'suppliers' ? 'active' : ''}`} 
-              onClick={() => onTabChange('suppliers')}
-              style={activeTab === 'suppliers' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
-            >
+            <button style={navItemStyle(activeTab === 'suppliers')} onClick={() => onTabChange('suppliers')}>
+              {activeTab === 'suppliers' && <ActiveIndicator />}
               <Users size={18} /> Supplier Hub
             </button>
-            <button 
-              className={`nav-link ${activeTab === 'ai' ? 'active' : ''}`} 
-              onClick={() => onTabChange('ai')}
-              style={activeTab === 'ai' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
-            >
-              <Activity size={18} /> AI & Simulation
+            <button style={navItemStyle(activeTab === 'global_sim')} onClick={() => onTabChange('global_sim')}>
+              {activeTab === 'global_sim' && <ActiveIndicator />}
+              <Globe size={18} /> Disruption Simulator
             </button>
-            <button 
-              className={`nav-link ${activeTab === 'analytics' ? 'active' : ''}`} 
-              onClick={() => onTabChange('analytics')}
-              style={activeTab === 'analytics' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
-            >
+            <button style={navItemStyle(activeTab === 'analytics')} onClick={() => onTabChange('analytics')}>
+              {activeTab === 'analytics' && <ActiveIndicator />}
               <BarChart3 size={18} /> Analytics
             </button>
-          </div>
+          </>
         )}
         
         {role === 'supplier' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <button 
-              className={`nav-link ${activeTab === 'overview' ? 'active' : ''}`} 
-              onClick={() => onTabChange('overview')}
-              style={activeTab === 'overview' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
-            >
+          <>
+            <button style={navItemStyle(activeTab === 'overview')} onClick={() => onTabChange('overview')}>
+              {activeTab === 'overview' && <ActiveIndicator />}
               <Zap size={18} /> Overview
             </button>
-            <button 
-              className={`nav-link ${activeTab === 'inventory' ? 'active' : ''}`} 
-              onClick={() => onTabChange('inventory')}
-              style={activeTab === 'inventory' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
-            >
+            <button style={navItemStyle(activeTab === 'inventory')} onClick={() => onTabChange('inventory')}>
+              {activeTab === 'inventory' && <ActiveIndicator />}
               <Package size={18} /> Inventory & Supply
             </button>
-            <button 
-              className={`nav-link ${activeTab === 'analytics' ? 'active' : ''}`} 
-              onClick={() => onTabChange('analytics')}
-              style={activeTab === 'analytics' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
-            >
+            <button style={navItemStyle(activeTab === 'analytics')} onClick={() => onTabChange('analytics')}>
+              {activeTab === 'analytics' && <ActiveIndicator />}
               <Activity size={18} /> Production Analytics
             </button>
-            <button 
-              className={`nav-link ${activeTab === 'intelligence' ? 'active' : ''}`} 
-              onClick={() => onTabChange('intelligence')}
-              style={activeTab === 'intelligence' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
-            >
+            <button style={navItemStyle(activeTab === 'intelligence')} onClick={() => onTabChange('intelligence')}>
+              {activeTab === 'intelligence' && <ActiveIndicator />}
               <Bell size={18} /> Intelligence & Alerts
             </button>
-          </div>
+          </>
         )}
 
         {role === 'admin' && (
           <NavLink 
-            to="/admin" 
-            className={({isActive}) => isActive ? "nav-link active" : "nav-link"} 
-            style={({isActive}) => isActive ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)' } : { color: '#94a3b8' }}
+            to="/dashboard/admin" 
+            style={({isActive}) => navItemStyle(isActive)}
           >
-            <Settings size={18} /> System Core
+            {({isActive}) => (
+              <>
+                {isActive && <ActiveIndicator />}
+                <Settings size={18} /> System Core
+              </>
+            )}
           </NavLink>
         )}
-
-
       </nav>
 
       <div style={{ padding: '1.5rem', marginTop: 'auto', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-        <NavLink to="/login" className="nav-link" style={{ padding: '0.75rem 1rem', marginBottom: 0, color: '#94a3b8' }}>
+        <NavLink to="/login" style={navItemStyle(false)} className="logout-btn">
           <LogOut size={18} /> Terminate Session
         </NavLink>
       </div>

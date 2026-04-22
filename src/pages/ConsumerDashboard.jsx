@@ -6,9 +6,10 @@ import { Button } from '../components/ui/Button';
 import { 
   Package, ShieldCheck, Activity, Share2, Database, Network, 
   Target, AlertTriangle, Clock, BarChart3, UploadCloud, Bell, CheckCircle2, TrendingUp, DollarSign,
-  PlusCircle, Trash2, Edit3, XCircle, Users, Truck
+  PlusCircle, Trash2, Edit3, XCircle, Users, Truck, Info, Globe, AlertCircle, Search
 } from 'lucide-react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { GlobalSimulation } from '../components/simulation/GlobalSimulation';
 
 const sparkData = [{ value: 30 }, { value: 50 }, { value: 40 }, { value: 60 }, { value: 55 }, { value: 75 }];
 const costData = [{ name: 'Steel', cost: 400 }, { name: 'Plastic', cost: 300 }, { name: 'Copper', cost: 200 }, { name: 'Silicon', cost: 278 }];
@@ -16,12 +17,15 @@ const trendData = [{ name: 'Week 1', score: 80 }, { name: 'Week 2', score: 85 },
 
 export const ConsumerDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [selectedRiskSupplier, setSelectedRiskSupplier] = useState(null);
 
-  // Product Request / Inventory State
+  // Expanded Product / Order State
   const [requestedProducts, setRequestedProducts] = useState([
-    { id: 1, name: 'Industrial Steel', quantity: 400, timeline: '12 Days', supplier: 'Titanium Corp', status: 'In Transit', shippingCost: 4000 },
-    { id: 2, name: 'Circuit Boards', quantity: 12000, timeline: '24 Days', supplier: 'TechFlow', status: 'Delayed', shippingCost: 1200 },
-    { id: 3, name: 'Polymer Casing', quantity: 8500, timeline: '5 Days', supplier: 'PolyMat Inc', status: 'Delivered', shippingCost: 850 },
+    { id: 1, name: 'Industrial Steel (Grade A)', quantity: 400, timeline: '12 Days', supplier: 'Titanium Corp', status: 'In Transit', shippingCost: 4000, progress: 65 },
+    { id: 2, name: 'Advanced Circuit Boards', quantity: 12000, timeline: '24 Days', supplier: 'TechFlow', status: 'Delayed', shippingCost: 1200, progress: 30 },
+    { id: 3, name: 'Polymer Casing L-4', quantity: 8500, timeline: '5 Days', supplier: 'PolyMat Inc', status: 'Delivered', shippingCost: 850, progress: 100 },
+    { id: 4, name: 'Copper Wiring (High Cap)', quantity: 2500, timeline: '15 Days', supplier: 'Apex Metals', status: 'Ordered', shippingCost: 2100, progress: 10 },
+    { id: 5, name: 'Silicon Wafers', quantity: 3000, timeline: '30 Days', supplier: 'GlobalTech', status: 'Processing', shippingCost: 5600, progress: 20 },
   ]);
 
   const [reqName, setReqName] = useState('');
@@ -36,15 +40,16 @@ export const ConsumerDashboard = () => {
         name: reqName,
         quantity: parseInt(reqQty),
         timeline: reqTime,
-        supplier: 'Awaiting Selection',
+        supplier: 'Awaiting AI Selection',
         status: 'Pending',
-        shippingCost: 0
+        shippingCost: 0,
+        progress: 0
     };
     setRequestedProducts([newProduct, ...requestedProducts]);
     setReqName('');
     setReqQty('');
     setReqTime('Standard (14 Days)');
-    setActiveTab('inventory'); // Switch to inventory to see the added item
+    setActiveTab('inventory'); 
   };
 
   const handleDeleteProduct = (id) => {
@@ -53,31 +58,93 @@ export const ConsumerDashboard = () => {
 
   const totalShippingCost = requestedProducts.reduce((acc, curr) => acc + curr.shippingCost, 0);
 
+  const riskDetails = {
+    'TechFlow': {
+        duration: '14 Days',
+        impact: 'Critical bottleneck in electronic assembly. High probability of assembly line stoppage within 72 hours.',
+        skus: 'Circuit Board B12, Processor P9, Connectivity Mesh Unit',
+        reason: 'Regional logistical strike and component shortages.'
+    },
+    'Global Logistics': {
+        duration: '5 Days',
+        impact: 'Moderate delays in international shipping lanes. Expected 15% increase in lead time for oceanic freight.',
+        skus: 'Heavy Raw Materials, Structural Steel',
+        reason: 'Geopolitical instability in canal routes.'
+    }
+  };
+
   return (
     <div className="layout-app">
       <Sidebar role="consumer" activeTab={activeTab} onTabChange={setActiveTab} />
       <div className="layout-main">
-        <Header title="Consumer Intelligence" userName="Procurement Lead" />
+        <Header title="GlobalChain Intelligence" userName="Procurement Lead" />
         <main className="layout-content">
           
           <div className="grid-main" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
 
             {activeTab === 'overview' && (
               <>
-                 <div className="card-flat" style={{ border: '2px solid var(--color-emerald)', backgroundColor: '#f0fdf4' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
-                        <Target size={24} color="var(--color-emerald)" />
-                        <h2 className="h-section" style={{ color: 'var(--color-emerald)', marginBottom: 0 }}>Recommended Plan</h2>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <ul style={{ listStyleType: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '15px', fontWeight: 600 }}>
-                            <li>• Supplier A for Steel → Lowest shipping cost</li>
-                            <li>• Supplier B for Plastic → Fastest delivery</li>
-                        </ul>
-                        <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase' }}>Est. Shipping Savings</div>
-                            <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--color-emerald)' }}>₹450</div>
+                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '1.5rem' }}>
+                    <div className="card-flat" style={{ border: '2px solid var(--color-emerald)', backgroundColor: '#f0fdf4', display: 'flex', flexDirection: 'column', height: '100%' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
+                            <Target size={24} color="var(--color-emerald)" />
+                            <h2 className="h-section" style={{ color: '#065f46', marginBottom: 0 }}>Active Optimization Plan</h2>
                         </div>
+                        <div style={{ flex: 1 }}>
+                            <ul style={{ listStyleType: 'none', padding: 0, margin: '0 0 1.5rem 0', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '15px', fontWeight: 600 }}>
+                                <li style={{ display: 'flex', gap: '8px' }}><CheckCircle2 size={18} color="#10b981" /> Consolidate Steel orders to Apex Metals</li>
+                                <li style={{ display: 'flex', gap: '8px' }}><CheckCircle2 size={18} color="#10b981" /> Diversify Electronics from TechFlow Hub</li>
+                                <li style={{ display: 'flex', gap: '8px' }}><CheckCircle2 size={18} color="#10b981" /> Activate Reserve Port in Rotterdam</li>
+                            </ul>
+                            <div style={{ padding: '1rem', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #d1fae5' }}>
+                                <div style={{ fontSize: '11px', fontWeight: 800, color: '#059669', marginBottom: '4px' }}>AI OPTIMIZATION NOTE</div>
+                                <p style={{ fontSize: '13px', color: '#10b981', margin: 0, fontWeight: 500 }}>"Switching to Regional Hub X could reduce carbon footprint by 12% and shipping cost by ₹1.2k."</p>
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', borderTop: '1px solid #d1fae5', paddingTop: '1rem' }}>
+                            <div>
+                                <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Est. Monthly Savings</div>
+                                <div style={{ fontSize: '24px', fontWeight: 800, color: '#059669' }}>₹45,000</div>
+                            </div>
+                            <Button variant="primary" style={{ backgroundColor: '#10b981' }}>Apply AI Plan</Button>
+                        </div>
+                    </div>
+
+                    <div className="card-flat">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem' }}>
+                            <Activity size={20} color="var(--color-signal)" />
+                            <h3 className="h-section" style={{ marginBottom: 0 }}>Smart Sourcing Engine</h3>
+                        </div>
+                        <table className="table-dense">
+                            <thead>
+                                <tr>
+                                    <th>SKU Group</th>
+                                    <th>Optimal Source</th>
+                                    <th>Ship Cost (Unit)</th>
+                                    <th>Reliability</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style={{ fontWeight: 600 }}>Raw Metals</td>
+                                    <td>Apex Metals</td>
+                                    <td>₹14.20</td>
+                                    <td><span style={{ color: '#16a34a', fontWeight: 700 }}>98%</span></td>
+                                </tr>
+                                <tr>
+                                    <td style={{ fontWeight: 600 }}>Semiconductors</td>
+                                    <td>GlobalTech</td>
+                                    <td>₹8.40</td>
+                                    <td><span style={{ color: '#d97706', fontWeight: 700 }}>82%</span></td>
+                                </tr>
+                                <tr>
+                                    <td style={{ fontWeight: 600 }}>Poly-Resins</td>
+                                    <td>PolyMat Inc</td>
+                                    <td>₹5.10</td>
+                                    <td><span style={{ color: '#16a34a', fontWeight: 700 }}>99%</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                  </div>
 
@@ -91,9 +158,12 @@ export const ConsumerDashboard = () => {
             )}
 
             {activeTab === 'request' && (
-              <div className="grid-main" style={{ maxWidth: '600px', margin: '0 auto', width: '100%' }}>
+              <div className="grid-main grid-cols-2" style={{ gridTemplateColumns: '1fr 1fr' }}>
                  <div className="card-flat" style={{ height: 'fit-content' }}>
-                    <h3 className="h-section" style={{ marginBottom: '1.5rem' }}>New Product Requisition</h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem' }}>
+                        <PlusCircle size={20} color="var(--color-signal)" />
+                        <h3 className="h-section" style={{ marginBottom: 0 }}>Manual Requisition</h3>
+                    </div>
                     <form onSubmit={handleAddRequest} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                         <div>
                             <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Product Name</label>
@@ -107,7 +177,7 @@ export const ConsumerDashboard = () => {
                             />
                         </div>
                         <div>
-                            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Quantity Needed</label>
+                            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Quantity</label>
                             <input 
                                 type="number" 
                                 value={reqQty}
@@ -118,7 +188,7 @@ export const ConsumerDashboard = () => {
                             />
                         </div>
                         <div>
-                            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Delivery Timeline</label>
+                            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Timeline</label>
                             <select 
                                 value={reqTime}
                                 onChange={(e) => setReqTime(e.target.value)}
@@ -129,8 +199,42 @@ export const ConsumerDashboard = () => {
                                 <option value="Urgent (3 Days)">Urgent (3 Days)</option>
                             </select>
                         </div>
-                        <Button variant="primary" style={{ marginTop: '0.5rem', width: '100%' }} type="submit">Add to Inventory & Analyze</Button>
+                        <Button variant="primary" style={{ marginTop: '0.5rem', width: '100%' }} type="submit">Add to Requisition</Button>
                     </form>
+                 </div>
+
+                 <div className="card-flat" style={{ height: 'fit-content' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem' }}>
+                        <UploadCloud size={20} color="var(--color-emerald)" />
+                        <h3 className="h-section" style={{ marginBottom: 0 }}>Bulk Manifest Upload</h3>
+                    </div>
+                    <div 
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                            e.preventDefault();
+                            const bulkItems = [
+                                { id: Date.now(), name: 'Copper Wiring', quantity: 5000, timeline: 'Fast (7 Days)', supplier: 'Awaiting Selection', status: 'Pending', shippingCost: 0, progress: 0 },
+                                { id: Date.now() + 1, name: 'Glass Panes', quantity: 200, timeline: 'Standard (14 Days)', supplier: 'Awaiting Selection', status: 'Pending', shippingCost: 0, progress: 0 }
+                            ];
+                            setRequestedProducts([...bulkItems, ...requestedProducts]);
+                        }}
+                        style={{ 
+                            padding: '3rem 2rem', border: '2px dashed var(--border-light)', borderRadius: '12px', 
+                            textAlign: 'center', backgroundColor: 'var(--bg-secondary)', cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                        }}
+                    >
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                            <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Database size={24} color="var(--color-emerald)" />
+                            </div>
+                            <div>
+                                <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>Drop Requisition CSV</div>
+                                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Automated product & supplier parsing</div>
+                            </div>
+                            <Button variant="ghost" style={{ fontSize: '11px', border: '1px solid var(--border-light)' }}>Browse Workspace</Button>
+                        </div>
+                    </div>
                  </div>
               </div>
             )}
@@ -138,16 +242,16 @@ export const ConsumerDashboard = () => {
             {activeTab === 'inventory' && (
               <div className="card-flat">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                    <h3 className="h-section">Inventory Management</h3>
-                    <Button variant="ghost" onClick={() => setActiveTab('request')} style={{ fontSize: '12px', gap: '6px' }}><PlusCircle size={14} /> Add Product</Button>
+                    <h3 className="h-section">Local Stock Control</h3>
+                    <Button variant="ghost" onClick={() => setActiveTab('request')} style={{ fontSize: '12px', gap: '6px' }}><PlusCircle size={14} /> Add SKU</Button>
                 </div>
                 <table className="table-dense">
                     <thead>
                         <tr>
-                            <th>Product</th>
+                            <th>SKU Name</th>
                             <th>Quantity</th>
-                            <th>Delivery Time</th>
-                            <th>Supplier</th>
+                            <th>Lead Time</th>
+                            <th>Source</th>
                             <th>Status</th>
                             <th style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
@@ -183,44 +287,129 @@ export const ConsumerDashboard = () => {
 
             {activeTab === 'procurement' && (
               <div className="card-flat">
-                <h3 className="h-section" style={{ marginBottom: '1.5rem' }}>Procurement Track</h3>
-                <table className="table-dense">
-                    <thead>
-                        <tr>
-                            <th>Item</th>
-                            <th>Quantity</th>
-                            <th>Selected Supplier</th>
-                            <th>Shipping Cost</th>
-                            <th>Delivery Time</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {requestedProducts.map(prod => (
-                            <tr key={prod.id}>
-                                <td style={{ fontWeight: 600 }}>{prod.name}</td>
-                                <td>{prod.quantity.toLocaleString()}</td>
-                                <td>{prod.supplier}</td>
-                                <td>₹{prod.shippingCost.toLocaleString()}</td>
-                                <td>{prod.timeline}</td>
-                                <td>
-                                    <span style={{ 
-                                        padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 700,
-                                        backgroundColor: prod.status === 'Delivered' ? '#f0fdf4' : prod.status === 'Delayed' ? '#fef2f2' : '#eff6ff',
-                                        color: prod.status === 'Delivered' ? '#16a34a' : prod.status === 'Delayed' ? '#dc2626' : '#2563eb'
-                                    }}>
-                                        {prod.status}
-                                    </span>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                    <div>
+                        <h3 className="h-section" style={{ marginBottom: '4px' }}>Live Procurement Track</h3>
+                        <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Real-time monitoring of all active inbound shipments</p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        <Button variant="ghost" style={{ fontSize: '11px' }}><Filter size={14} /> Filter</Button>
+                        <Button variant="ghost" style={{ fontSize: '11px' }}><Search size={14} /> Search</Button>
+                    </div>
+                </div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {requestedProducts.map(prod => (
+                        <div key={prod.id} style={{ padding: '1.5rem', border: '1px solid var(--border-light)', borderRadius: '12px', backgroundColor: 'var(--bg-secondary)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                                <div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <Truck size={18} color="var(--color-signal)" />
+                                        <span style={{ fontWeight: 800, fontSize: '15px' }}>{prod.name}</span>
+                                        <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', backgroundColor: '#e2e8f0', padding: '2px 8px', borderRadius: '4px' }}>#{prod.id}</span>
+                                    </div>
+                                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>Supplier: {prod.supplier} • Qty: {prod.quantity.toLocaleString()}</div>
+                                </div>
+                                <div style={{ textAlign: 'right' }}>
+                                    <div style={{ fontSize: '14px', fontWeight: 800, color: 'var(--color-signal)' }}>₹{prod.shippingCost.toLocaleString()}</div>
+                                    <div style={{ fontSize: '11px', fontWeight: 700, color: prod.status === 'Delayed' ? 'var(--color-alert)' : '#10b981', marginTop: '4px' }}>{prod.status.toUpperCase()}</div>
+                                </div>
+                            </div>
+                            
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <div style={{ flex: 1, height: '8px', backgroundColor: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                                    <div style={{ height: '100%', width: `${prod.progress}%`, backgroundColor: prod.status === 'Delayed' ? 'var(--color-alert)' : 'var(--color-signal)', transition: 'width 1s ease-in-out' }}></div>
+                                </div>
+                                <span style={{ fontSize: '12px', fontWeight: 800, minWidth: '40px' }}>{prod.progress}%</span>
+                            </div>
+                            
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-light)' }}>
+                                <div style={{ display: 'flex', gap: '1.5rem' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <Clock size={14} color="#64748b" />
+                                        <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b' }}>ETA: {prod.timeline}</span>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <ShieldCheck size={14} color="#10b981" />
+                                        <span style={{ fontSize: '11px', fontWeight: 700, color: '#10b981' }}>Insured</span>
+                                    </div>
+                                </div>
+                                <button style={{ border: 'none', background: 'none', color: 'var(--color-signal)', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}>VIEW FULL TRACKING →</button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
               </div>
             )}
 
             {activeTab === 'suppliers' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                 <div style={{ display: 'grid', gridTemplateColumns: selectedRiskSupplier ? '1fr 1fr' : '1fr', gap: '1.5rem' }}>
+                    <div className="card-flat">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem' }}>
+                            <AlertTriangle size={20} color="var(--color-alert)" />
+                            <h3 className="h-section">Risk-Wise Supplier Matrix</h3>
+                        </div>
+                        <div className="grid-main grid-cols-3">
+                            <div 
+                                onClick={() => setSelectedRiskSupplier('TechFlow')}
+                                style={{ padding: '1.5rem', border: '1px solid #fecaca', backgroundColor: '#fef2f2', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s ease', borderLeft: '4px solid #ef4444' }}
+                            >
+                                <div style={{ fontWeight: 800, color: '#dc2626', fontSize: '11px', marginBottom: '8px', letterSpacing: '0.05em' }}>HIGH RISK</div>
+                                <div style={{ fontWeight: 700, fontSize: '15px' }}>TechFlow</div>
+                                <div style={{ fontSize: '11px', color: '#dc2626', marginTop: '4px' }}>Click for deep impact analysis</div>
+                            </div>
+                            <div 
+                                onClick={() => setSelectedRiskSupplier('Global Logistics')}
+                                style={{ padding: '1.5rem', border: '1px solid #fecaca', backgroundColor: '#fef2f2', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s ease', borderLeft: '4px solid #ef4444' }}
+                            >
+                                <div style={{ fontWeight: 800, color: '#dc2626', fontSize: '11px', marginBottom: '8px', letterSpacing: '0.05em' }}>HIGH RISK</div>
+                                <div style={{ fontWeight: 700, fontSize: '15px' }}>Global Logistics</div>
+                                <div style={{ fontSize: '11px', color: '#dc2626', marginTop: '4px' }}>Click for deep impact analysis</div>
+                            </div>
+                            <div style={{ padding: '1.5rem', border: '1px solid #fef3c7', backgroundColor: '#fffbeb', borderRadius: '8px', borderLeft: '4px solid #f59e0b' }}>
+                                <div style={{ fontWeight: 800, color: '#d97706', fontSize: '11px', marginBottom: '8px' }}>MEDIUM RISK</div>
+                                <div style={{ fontWeight: 700, fontSize: '15px' }}>PolyMat Inc</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {selectedRiskSupplier && (
+                        <div className="card-flat" style={{ border: '1px solid var(--color-alert)', backgroundColor: '#fffcfc' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <AlertCircle size={20} color="var(--color-alert)" />
+                                    <h3 className="h-section" style={{ color: 'var(--color-alert)' }}>Risk Detail: {selectedRiskSupplier}</h3>
+                                </div>
+                                <button onClick={() => setSelectedRiskSupplier(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><XCircle size={20} /></button>
+                            </div>
+                            
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                                <div>
+                                    <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '4px' }}>DANGER DURATION</div>
+                                    <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--color-alert)' }}>Active for {riskDetails[selectedRiskSupplier].duration}</div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '4px' }}>BUSINESS IMPACT</div>
+                                    <p style={{ fontSize: '13px', lineHeight: '1.6', margin: 0, color: 'var(--text-primary)' }}>{riskDetails[selectedRiskSupplier].impact}</p>
+                                </div>
+                                <div style={{ padding: '1rem', backgroundColor: 'rgba(239, 68, 68, 0.05)', borderRadius: '8px' }}>
+                                    <div style={{ fontSize: '11px', fontWeight: 800, color: '#ef4444', marginBottom: '8px' }}>AFFECTED SKUS (HIGH DEMAND)</div>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                        {riskDetails[selectedRiskSupplier].skus.split(', ').map((sku, i) => (
+                                            <span key={i} style={{ padding: '4px 10px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '4px', fontSize: '11px', fontWeight: 700, color: '#ef4444' }}>{sku}</span>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '4px' }}>ROOT CAUSE</div>
+                                    <div style={{ fontSize: '13px', fontWeight: 500 }}>{riskDetails[selectedRiskSupplier].reason}</div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                 </div>
+
                  <div className="card-flat">
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem' }}>
                         <Users size={20} color="var(--color-emerald)" />
@@ -256,130 +445,18 @@ export const ConsumerDashboard = () => {
                                 <td>Electronics</td>
                                 <td>75%</td>
                                 <td>24 Days</td>
-                                <td><span style={{ color: '#d97706', fontWeight: 700 }}>WATCHLIST</span></td>
+                                <td><span style={{ color: '#ef4444', fontWeight: 700 }}>RISK ALERT</span></td>
                             </tr>
                         </tbody>
                     </table>
-                 </div>
-
-                 <div className="card-flat">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem' }}>
-                        <AlertTriangle size={20} color="var(--color-alert)" />
-                        <h3 className="h-section">Risk-Wise Supplier Matrix</h3>
-                    </div>
-                    <div className="grid-main grid-cols-3">
-                        <div style={{ padding: '1rem', border: '1px solid #fecaca', backgroundColor: '#fef2f2', borderRadius: '8px' }}>
-                            <div style={{ fontWeight: 800, color: '#dc2626', fontSize: '12px', marginBottom: '8px' }}>HIGH RISK</div>
-                            <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '13px' }}>
-                                <li style={{ marginBottom: '4px' }}>• TechFlow (75% Reliability)</li>
-                                <li>• Global Logistics (Geopolitical)</li>
-                            </ul>
-                        </div>
-                        <div style={{ padding: '1rem', border: '1px solid #fef3c7', backgroundColor: '#fffbeb', borderRadius: '8px' }}>
-                            <div style={{ fontWeight: 800, color: '#d97706', fontSize: '12px', marginBottom: '8px' }}>MEDIUM RISK</div>
-                            <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '13px' }}>
-                                <li style={{ marginBottom: '4px' }}>• PolyMat Inc (Capacity)</li>
-                                <li>• ValuePlast (Financials)</li>
-                            </ul>
-                        </div>
-                        <div style={{ padding: '1rem', border: '1px solid #d1fae5', backgroundColor: '#f0fdf4', borderRadius: '8px' }}>
-                            <div style={{ fontWeight: 800, color: '#16a34a', fontSize: '12px', marginBottom: '8px' }}>LOW RISK</div>
-                            <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '13px' }}>
-                                <li style={{ marginBottom: '4px' }}>• Apex Metals</li>
-                                <li>• Titanium Corp</li>
-                            </ul>
-                        </div>
-                    </div>
                  </div>
               </div>
             )}
 
-            {activeTab === 'ai' && (
-              <>
-                 <div className="grid-main grid-cols-2" style={{ gridTemplateColumns: '1.6fr 1.4fr' }}>
-                     <div className="card-flat">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem' }}>
-                            <Activity size={18} color="var(--color-emerald)" />
-                            <h3 className="h-section" style={{ marginBottom: 0 }}>AI Recommendations</h3>
-                        </div>
-                        <table className="table-dense">
-                            <thead>
-                                <tr>
-                                    <th>Item</th>
-                                    <th>Recommended Supplier</th>
-                                    <th>Ship Cost</th>
-                                    <th>Risk Level</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td style={{ fontWeight: 600 }}>Steel</td>
-                                    <td>Apex Metals</td>
-                                    <td>₹400</td>
-                                    <td><span style={{ padding: '4px 8px', backgroundColor: '#f0fdf4', color: '#16a34a', fontSize: '11px', fontWeight: 700, borderRadius: '4px' }}>✅ Best Choice</span></td>
-                                </tr>
-                                <tr>
-                                    <td style={{ fontWeight: 600 }}>Circuits</td>
-                                    <td>GlobalTech</td>
-                                    <td>₹1,100</td>
-                                    <td><span style={{ padding: '4px 8px', backgroundColor: '#fffbeb', color: '#d97706', fontSize: '11px', fontWeight: 700, borderRadius: '4px' }}>⚠️ Risky</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                     </div>
-
-                     <div className="card-flat">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem' }}>
-                            <AlertTriangle size={18} color="var(--color-alert)" />
-                            <h3 className="h-section" style={{ marginBottom: 0 }}>Risk Analysis Panel</h3>
-                        </div>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Current Operational Risks</div>
-                            <ul style={{ fontSize: '13px', lineHeight: '1.6', margin: 0, paddingLeft: '20px' }}>
-                                <li>Delayed shipments <span style={{ color: 'var(--color-alert)', fontWeight: 700, fontSize: '11px', marginLeft: '4px' }}>(High)</span></li>
-                                <li>Shipping cost fluctuations <span style={{ color: '#d97706', fontWeight: 700, fontSize: '11px', marginLeft: '4px' }}>(Medium)</span></li>
-                            </ul>
-                        </div>
-                     </div>
-                 </div>
-
-                 <div className="card-flat" style={{ borderLeft: '4px solid var(--color-signal)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <Share2 size={20} color="var(--color-signal)" />
-                            <h3 className="h-section" style={{ marginBottom: 0 }}>Simulation Engine</h3>
-                        </div>
-                        <Button variant="primary" style={{ backgroundColor: 'var(--color-signal)', padding: '0.5rem 1.5rem' }}>Run Simulation</Button>
-                    </div>
-                    <table className="table-dense">
-                        <thead>
-                            <tr>
-                                <th>Scenario</th>
-                                <th>Supplier Config</th>
-                                <th>Shipping Cost</th>
-                                <th>Delivery Time</th>
-                                <th>Trade-off Note</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr style={{ backgroundColor: '#f8fafc' }}>
-                                <td style={{ fontWeight: 700, color: 'var(--color-signal)' }}>★ Opti-Ship</td>
-                                <td>Apex + PolyMat</td>
-                                <td style={{ fontWeight: 700 }}>₹4.6k</td>
-                                <td style={{ fontWeight: 700 }}>14 Days</td>
-                                <td style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Lowest shipping cost</td>
-                            </tr>
-                            <tr>
-                                <td style={{ fontWeight: 600 }}>Fast-Track</td>
-                                <td>Titanium + PolyMat</td>
-                                <td>₹5.8k</td>
-                                <td>12 Days</td>
-                                <td style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Speed priority</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                 </div>
-              </>
+            {activeTab === 'global_sim' && (
+              <div className="card-flat" style={{ padding: 0, overflow: 'hidden' }}>
+                <GlobalSimulation />
+              </div>
             )}
 
             {activeTab === 'analytics' && (
