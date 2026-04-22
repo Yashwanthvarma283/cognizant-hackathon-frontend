@@ -13,7 +13,8 @@ import {
   BarChart3,
   Database,
   ShoppingCart,
-  Bell
+  Bell,
+  PlusCircle
 } from 'lucide-react';
 import './layout.css';
 
@@ -53,6 +54,34 @@ export const Sidebar = ({ role, activeTab, onTabChange }) => {
               <Zap size={18} /> Overview
             </button>
             <button 
+              className={`nav-link ${activeTab === 'request' ? 'active' : ''}`} 
+              onClick={() => onTabChange('request')}
+              style={activeTab === 'request' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <PlusCircle size={18} /> Requisition
+            </button>
+            <button 
+              className={`nav-link ${activeTab === 'inventory' ? 'active' : ''}`} 
+              onClick={() => onTabChange('inventory')}
+              style={activeTab === 'inventory' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <Package size={18} /> Inventory List
+            </button>
+            <button 
+              className={`nav-link ${activeTab === 'procurement' ? 'active' : ''}`} 
+              onClick={() => onTabChange('procurement')}
+              style={activeTab === 'procurement' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <Truck size={18} /> Procurement Track
+            </button>
+            <button 
+              className={`nav-link ${activeTab === 'suppliers' ? 'active' : ''}`} 
+              onClick={() => onTabChange('suppliers')}
+              style={activeTab === 'suppliers' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <Users size={18} /> Supplier Hub
+            </button>
+            <button 
               className={`nav-link ${activeTab === 'ai' ? 'active' : ''}`} 
               onClick={() => onTabChange('ai')}
               style={activeTab === 'ai' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
@@ -65,20 +94,6 @@ export const Sidebar = ({ role, activeTab, onTabChange }) => {
               style={activeTab === 'analytics' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
             >
               <BarChart3 size={18} /> Analytics
-            </button>
-            <button 
-              className={`nav-link ${activeTab === 'data' ? 'active' : ''}`} 
-              onClick={() => onTabChange('data')}
-              style={activeTab === 'data' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
-            >
-              <Database size={18} /> Data Management
-            </button>
-            <button 
-              className={`nav-link ${activeTab === 'request' ? 'active' : ''}`} 
-              onClick={() => onTabChange('request')}
-              style={activeTab === 'request' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
-            >
-              <ShoppingCart size={18} /> Request Products
             </button>
           </div>
         )}
