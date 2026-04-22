@@ -11,30 +11,36 @@ import {
   Clock, Database, TrendingUp, AlertTriangle, CheckCircle2 
 } from 'lucide-react';
 
-const sparkData = [{ value: 40 }, { value: 60 }, { value: 45 }, { value: 70 }, { value: 65 }, { value: 80 }];
-const yieldData = [
-  { name: 'Mon', yield: 94 },
-  { name: 'Tue', yield: 96 },
-  { name: 'Wed', yield: 92 },
-  { name: 'Thu', yield: 95 },
-  { name: 'Fri', yield: 97 },
-  { name: 'Sat', yield: 98 },
-  { name: 'Sun', yield: 96 },
+const skuData = [
+  { id: 'SKU-001', name: 'High-Performance Processor', category: 'Semiconductors', leadTime: '5 Days', status: 'In Production' },
+  { id: 'SKU-002', name: 'Quantum Memory Module', category: 'Storage', leadTime: '3 Days', status: 'Ready' },
+  { id: 'SKU-003', name: 'Optical Sensor Array', category: 'Sensors', leadTime: '7 Days', status: 'Awaiting Materials' },
+  { id: 'SKU-004', name: 'Neural Link Interface', category: 'Bio-Tech', leadTime: '12 Days', status: 'Design Phase' },
 ];
-const inventoryData = [
-  { name: 'Raw Material', current: 200, optimal: 300 },
-  { name: 'WIP', current: 250, optimal: 320 },
-  { name: 'Finished', current: 180, optimal: 280 },
+
+const capacityData = [
+  { sku: 'SKU-001', maxCapacity: 5000, currentLoad: 4200, utilization: 84 },
+  { sku: 'SKU-002', maxCapacity: 12000, currentLoad: 3000, utilization: 25 },
+  { sku: 'SKU-003', maxCapacity: 2500, currentLoad: 2450, utilization: 98 },
+  { sku: 'SKU-004', maxCapacity: 1000, currentLoad: 150, utilization: 15 },
 ];
-const demandData = [
-  { name: 'Week 1', forecast: 400, actual: 380 },
-  { name: 'Week 2', forecast: 450, actual: 460 },
-  { name: 'Week 3', forecast: 420, actual: 410 },
-  { name: 'Week 4', forecast: 500, actual: null },
+
+const cycleData = [
+  { sku: 'SKU-001', initialCycle: '14 Days', repeatCycle: '10 Days', batchSize: 500 },
+  { sku: 'SKU-002', initialCycle: '7 Days', repeatCycle: '4 Days', batchSize: 2000 },
+  { sku: 'SKU-003', initialCycle: '21 Days', repeatCycle: '15 Days', batchSize: 250 },
+  { sku: 'SKU-004', initialCycle: '45 Days', repeatCycle: '30 Days', batchSize: 100 },
+];
+
+const consumerData = [
+  { name: 'Tesla Motors', location: 'Austin, TX', activeSkus: ['SKU-001', 'SKU-003'], lastOrder: '2026-04-20', status: 'Active' },
+  { name: 'Apple Inc.', location: 'Cupertino, CA', activeSkus: ['SKU-002'], lastOrder: '2026-04-22', status: 'Active' },
+  { name: 'SpaceX', location: 'Boca Chica, TX', activeSkus: ['SKU-001', 'SKU-004'], lastOrder: '2026-04-15', status: 'Urgent' },
+  { name: 'Samsung Electronics', location: 'Seoul, KR', activeSkus: ['SKU-003'], lastOrder: '2026-04-18', status: 'Idle' },
 ];
 
 export const SupplierDashboard = () => {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('sku_management');
 
   return (
     <div className="layout-app">
@@ -45,298 +51,155 @@ export const SupplierDashboard = () => {
           
           <div className="grid-main" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             
-            {activeTab === 'overview' && (
-              <>
-                {/* 1. Decision Hub - Operational Recommendation */}
-                <div className="card-flat" style={{ border: '2px solid var(--color-signal)', backgroundColor: '#f0f9ff' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
-                        <Target size={24} color="var(--color-signal)" />
-                        <h2 className="h-section" style={{ color: 'var(--color-signal)', marginBottom: 0 }}>Operational Intelligence</h2>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ fontSize: '15px', fontWeight: 600 }}>
-                            <span style={{ color: 'var(--color-signal)' }}>Action Recommended:</span> Shift 15% of production load from Node 1 to Node 2 to optimize power costs and avoid predicted peak-hour surcharges.
-                        </div>
-                        <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase' }}>EST. SAVINGS</div>
-                            <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--color-signal)' }}>$4,200/wk</div>
-                        </div>
-                    </div>
+            {activeTab === 'sku_management' && (
+              <div className="card-flat">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem' }}>
+                  <Package size={20} color="var(--color-signal)" />
+                  <h3 className="h-section">SKU Portfolio & Lead Times</h3>
                 </div>
-
-                {/* 2. Operational KPIs (8-card grid) */}
-                <div className="grid-main grid-cols-4">
-                    <KPICard title="Revenue Generated" value="$24.8M" trend="+14%" isUp={true} color="emerald" data={sparkData} />
-                    <KPICard title="Total Orders" value="3,842" trend="+8%" isUp={true} color="emerald" data={sparkData} />
-                    <KPICard title="Fulfillment Rate" value="98.2%" trend="+0.5%" isUp={true} color="emerald" data={sparkData} />
-                    <KPICard title="Cycle Time (Avg)" value="4.2 Days" trend="-12%" isUp={true} color="emerald" data={sparkData.slice().reverse()} />
-                    
-                    <KPICard title="Current Stock Level" value="84%" trend="Optimal" isUp={true} color="signal" data={sparkData} />
-                    <KPICard title="Quality Yield" value="96.4%" trend="+1.2%" isUp={true} color="emerald" data={sparkData} />
-                    <KPICard title="Machine Uptime" value="99.1%" trend="Stable" isUp={true} color="emerald" data={sparkData} />
-                    <KPICard title="Pending Fulfillment" value="124" trend="-5%" isUp={false} color="alert" data={sparkData.slice().reverse()} />
-                </div>
-
-                {/* 3. Active Order Queue */}
-                <div className="card-flat">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem' }}>
-                        <Cpu size={20} color="var(--color-signal)" />
-                        <h3 className="h-section">Priority Order Queue</h3>
-                    </div>
-                    <table className="table-dense">
-                        <thead>
-                            <tr>
-                                <th>Order ID</th>
-                                <th>Client Node</th>
-                                <th>Volume</th>
-                                <th>Status</th>
-                                <th>ETA</th>
-                                <th>Priority</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style={{ fontWeight: 700 }}>#ORD-9921</td>
-                                <td>Berlin Hub</td>
-                                <td>4,000 Units</td>
-                                <td><span style={{ color: 'var(--color-emerald)', fontWeight: 700 }}>SHIPPED</span></td>
-                                <td>Today</td>
-                                <td><span style={{ color: 'var(--color-alert)', fontWeight: 800 }}>URGENT</span></td>
-                            </tr>
-                            <tr>
-                                <td style={{ fontWeight: 700 }}>#ORD-9925</td>
-                                <td>Tokyo Port</td>
-                                <td>1,200 Units</td>
-                                <td><span style={{ color: 'var(--color-signal)', fontWeight: 700 }}>PROCESSING</span></td>
-                                <td>2 Days</td>
-                                <td>Normal</td>
-                            </tr>
-                            <tr>
-                                <td style={{ fontWeight: 700 }}>#ORD-9930</td>
-                                <td>London DC</td>
-                                <td>8,500 Units</td>
-                                <td><span style={{ color: 'var(--color-alert)', fontWeight: 700 }}>DELAYED</span></td>
-                                <td>5 Days</td>
-                                <td><span style={{ color: 'var(--color-alert)', fontWeight: 800 }}>CRITICAL</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-              </>
+                <table className="table-dense">
+                  <thead>
+                    <tr>
+                      <th>SKU ID</th>
+                      <th>Product Name</th>
+                      <th>Category</th>
+                      <th>Lead Time</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {skuData.map((sku) => (
+                      <tr key={sku.id}>
+                        <td style={{ fontWeight: 700 }}>{sku.id}</td>
+                        <td>{sku.name}</td>
+                        <td>{sku.category}</td>
+                        <td><span style={{ color: 'var(--color-signal)', fontWeight: 700 }}>{sku.leadTime}</span></td>
+                        <td>
+                          <span style={{ 
+                            padding: '4px 8px', 
+                            borderRadius: '4px', 
+                            fontSize: '11px', 
+                            fontWeight: 800,
+                            backgroundColor: sku.status === 'Ready' ? 'var(--color-emerald-light)' : 'var(--bg-secondary)',
+                            color: sku.status === 'Ready' ? 'var(--color-emerald)' : 'var(--text-muted)'
+                          }}>
+                            {sku.status.toUpperCase()}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
 
-            {activeTab === 'inventory' && (
-              <>
-                <div className="grid-main grid-cols-2" style={{ gridTemplateColumns: '1.4fr 1.6fr' }}>
-                    {/* 4. Inventory Distribution */}
-                    <div className="card-flat">
-                        <h3 className="h-section">Stock Distribution</h3>
-                        <div style={{ width: '100%', height: '240px', marginTop: '1.5rem' }}>
-                            <ResponsiveContainer>
-                                <BarChart data={inventoryData}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                                    <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: 'var(--shadow-premium)' }} />
-                                    <Bar dataKey="current" fill="var(--color-signal)" radius={[4, 4, 0, 0]} barSize={40} />
-                                    <Bar dataKey="optimal" fill="#e2e8f0" radius={[4, 4, 0, 0]} barSize={40} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-
-                    {/* 5. Supplier/Vendor Management */}
-                    <div className="card-flat">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem' }}>
-                            <Globe size={20} color="var(--color-emerald)" />
-                            <h3 className="h-section">Inbound Material Performance</h3>
-                        </div>
-                        <table className="table-dense">
-                            <thead>
-                                <tr>
-                                    <th>Vendor</th>
-                                    <th>Compliance</th>
-                                    <th>Lead Time</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td style={{ fontWeight: 700 }}>TechFlow Ltd</td>
-                                    <td>98.2%</td>
-                                    <td>4 Days</td>
-                                    <td><CheckCircle2 size={16} color="var(--color-emerald)" /></td>
-                                </tr>
-                                <tr>
-                                    <td style={{ fontWeight: 700 }}>MacroLogix</td>
-                                    <td>84.5%</td>
-                                    <td>12 Days</td>
-                                    <td><AlertTriangle size={16} color="var(--color-alert)" /></td>
-                                </tr>
-                                <tr>
-                                    <td style={{ fontWeight: 700 }}>Nova Systems</td>
-                                    <td>92.1%</td>
-                                    <td>7 Days</td>
-                                    <td><Clock size={16} color="var(--color-signal)" /></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                {/* 6. Resource Allocation */}
+            {activeTab === 'capacity' && (
+              <div className="grid-main" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                 <div className="card-flat">
-                    <h3 className="h-section" style={{ marginBottom: '1.5rem' }}>Production Line Allocation</h3>
-                    <div className="grid-main grid-cols-3">
-                        {[1, 2, 3].map(id => (
-                            <div key={id} style={{ padding: '1.25rem', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                                    <div style={{ fontWeight: 700, fontSize: '13px' }}>LINE-{id}00</div>
-                                    <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--color-emerald)' }}>ACTIVE</div>
-                                </div>
-                                <div style={{ height: '4px', width: '100%', backgroundColor: '#f1f5f9', borderRadius: '2px', marginBottom: '8px' }}>
-                                    <div style={{ height: '100%', width: `${Math.random() * 40 + 60}%`, backgroundColor: 'var(--color-signal)', borderRadius: '2px' }}></div>
-                                </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-muted)' }}>
-                                    <span>Load: {Math.floor(Math.random() * 20 + 70)}%</span>
-                                    <span>MTBF: 1,420h</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem' }}>
+                    <Zap size={20} color="var(--color-signal)" />
+                    <h3 className="h-section">Daily Production Capacity</h3>
+                  </div>
+                  <div className="grid-main grid-cols-2" style={{ gap: '1.5rem' }}>
+                    {capacityData.map((cap) => (
+                      <div key={cap.sku} style={{ padding: '1.5rem', border: '1px solid var(--border-light)', borderRadius: '12px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                          <span style={{ fontWeight: 800, fontSize: '14px' }}>{cap.sku}</span>
+                          <span style={{ fontSize: '12px', fontWeight: 700, color: cap.utilization > 90 ? 'var(--color-alert)' : 'var(--color-emerald)' }}>
+                            {cap.utilization}% Utilized
+                          </span>
+                        </div>
+                        <div style={{ height: '8px', width: '100%', backgroundColor: 'var(--bg-secondary)', borderRadius: '4px', marginBottom: '1rem', overflow: 'hidden' }}>
+                          <div style={{ 
+                            height: '100%', 
+                            width: `${cap.utilization}%`, 
+                            backgroundColor: cap.utilization > 90 ? 'var(--color-alert)' : 'var(--color-signal)',
+                            transition: 'width 0.5s ease'
+                          }}></div>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                          <span className="text-muted">Current Load: <strong>{cap.currentLoad.toLocaleString()}</strong></span>
+                          <span className="text-muted">Max Capacity: <strong>{cap.maxCapacity.toLocaleString()}</strong></span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </>
+              </div>
             )}
 
-            {activeTab === 'analytics' && (
-              <>
-                <div className="grid-main grid-cols-2" style={{ gridTemplateColumns: '1.6fr 1.4fr' }}>
-                    {/* 7. Throughput Analysis */}
-                    <div className="card-flat">
-                        <h3 className="h-section">Supply Chain Throughput</h3>
-                        <div style={{ width: '100%', height: '280px', marginTop: '2rem' }}>
-                            <ResponsiveContainer>
-                                <AreaChart data={sparkData}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                    <XAxis dataKey="name" hide />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                                    <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: 'var(--shadow-premium)' }} />
-                                    <Area type="monotone" dataKey="value" stroke="var(--color-signal)" fill="rgba(14, 165, 233, 0.05)" strokeWidth={3} />
-                                </AreaChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-
-                    {/* 8. Production Yield Trend */}
-                    <div className="card-flat">
-                        <h3 className="h-section">Production Yield Quality</h3>
-                        <div style={{ width: '100%', height: '280px', marginTop: '2rem' }}>
-                            <ResponsiveContainer>
-                                <LineChart data={yieldData}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                                    <YAxis domain={[90, 100]} axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                                    <Tooltip contentStyle={{ borderRadius: '8px', border: 'none' }} />
-                                    <Line type="monotone" dataKey="yield" stroke="var(--color-emerald)" strokeWidth={4} dot={{ r: 4, fill: 'var(--color-emerald)' }} />
-                                </LineChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
+            {activeTab === 'cycles' && (
+              <div className="card-flat">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem' }}>
+                  <Activity size={20} color="var(--color-signal)" />
+                  <h3 className="h-section">Production & Reorder Cycles</h3>
                 </div>
-
-                {/* 9. Cost Analysis Breakdown */}
-                <div className="card-flat">
-                    <h3 className="h-section" style={{ marginBottom: '1.5rem' }}>Operational Cost Analysis</h3>
-                    <div className="grid-main grid-cols-3">
-                        <div style={{ padding: '1.5rem', backgroundColor: 'var(--bg-secondary)', borderRadius: '12px' }}>
-                            <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px' }}>ENERGY CONSUMPTION</div>
-                            <div style={{ fontSize: '24px', fontWeight: 800 }}>$124,200</div>
-                            <div style={{ fontSize: '12px', color: 'var(--color-alert)', fontWeight: 700, marginTop: '4px' }}>+12% vs Month</div>
-                        </div>
-                        <div style={{ padding: '1.5rem', backgroundColor: 'var(--bg-secondary)', borderRadius: '12px' }}>
-                            <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px' }}>LABOR COSTS</div>
-                            <div style={{ fontSize: '24px', fontWeight: 800 }}>$482,000</div>
-                            <div style={{ fontSize: '12px', color: 'var(--color-emerald)', fontWeight: 700, marginTop: '4px' }}>-2% Optimization</div>
-                        </div>
-                        <div style={{ padding: '1.5rem', backgroundColor: 'var(--bg-secondary)', borderRadius: '12px' }}>
-                            <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px' }}>LOGISTICS & FUEL</div>
-                            <div style={{ fontSize: '24px', fontWeight: 800 }}>$92,400</div>
-                            <div style={{ fontSize: '12px', color: 'var(--color-signal)', fontWeight: 700, marginTop: '4px' }}>Stable</div>
-                        </div>
-                    </div>
-                </div>
-              </>
+                <table className="table-dense">
+                  <thead>
+                    <tr>
+                      <th>SKU ID</th>
+                      <th>Initial Cycle</th>
+                      <th>Repeat Order Cycle</th>
+                      <th>Standard Batch Size</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cycleData.map((cycle) => (
+                      <tr key={cycle.sku}>
+                        <td style={{ fontWeight: 700 }}>{cycle.sku}</td>
+                        <td><div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Clock size={14} /> {cycle.initialCycle}</div></td>
+                        <td><div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-emerald)', fontWeight: 600 }}><TrendingUp size={14} /> {cycle.repeatCycle}</div></td>
+                        <td>{cycle.batchSize.toLocaleString()} Units</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
 
-            {activeTab === 'intelligence' && (
-              <>
-                <div className="grid-main grid-cols-2" style={{ gridTemplateColumns: '1.6fr 1.4fr' }}>
-                    {/* 10. AI Demand Forecast */}
-                    <div className="card-flat">
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                            <h3 className="h-section">AI Demand Forecast</h3>
-                            <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--color-emerald)', border: '1px solid var(--color-emerald)', padding: '2px 8px', borderRadius: '4px' }}>94% CONFIDENCE</div>
-                        </div>
-                        <div style={{ width: '100%', height: '240px' }}>
-                            <ResponsiveContainer>
-                                <LineChart data={demandData}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                                    <Tooltip contentStyle={{ borderRadius: '8px', border: 'none' }} />
-                                    <Line type="stepAfter" dataKey="forecast" stroke="var(--color-signal)" strokeDasharray="5 5" strokeWidth={2} dot={false} />
-                                    <Line type="monotone" dataKey="actual" stroke="var(--text-primary)" strokeWidth={3} dot={{ r: 4, fill: 'var(--text-primary)' }} />
-                                </LineChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-
-                    {/* 11. System Alerts Feed */}
-                    <div className="card-flat">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem' }}>
-                            <Bell size={20} color="var(--color-alert)" />
-                            <h3 className="h-section">Operational Alerts</h3>
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            <div style={{ padding: '1rem', borderLeft: '4px solid var(--color-alert)', backgroundColor: '#fff1f2', borderRadius: '4px' }}>
-                                <div style={{ fontSize: '12px', fontWeight: 800, color: '#991b1b', marginBottom: '4px' }}>CRITICAL: NODE-4 OVERLOAD</div>
-                                <div style={{ fontSize: '12px', color: '#b91c1c' }}>Thermal levels exceeding safety threshold at Singapore Data Center.</div>
-                            </div>
-                            <div style={{ padding: '1rem', borderLeft: '4px solid #f59e0b', backgroundColor: '#fffbeb', borderRadius: '4px' }}>
-                                <div style={{ fontSize: '12px', fontWeight: 800, color: '#92400e', marginBottom: '4px' }}>WARNING: LOGISTICS BOTTLE-NECK</div>
-                                <div style={{ fontSize: '12px', color: '#b45309' }}>Suez Canal congestion may delay Inbound-3 manifest by 72 hours.</div>
-                            </div>
-                            <div style={{ padding: '1rem', borderLeft: '4px solid var(--color-emerald)', backgroundColor: '#f0fdf4', borderRadius: '4px' }}>
-                                <div style={{ fontSize: '12px', fontWeight: 800, color: '#166534', marginBottom: '4px' }}>INSIGHT: INVENTORY OPTIMIZATION</div>
-                                <div style={{ fontSize: '12px', color: '#15803d' }}>Reducing Raw Material stock by 5% could save $1,200/mo in holding costs.</div>
-                            </div>
-                        </div>
-                    </div>
+            {activeTab === 'consumers' && (
+              <div className="card-flat">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem' }}>
+                  <Users size={20} color="var(--color-signal)" />
+                  <h3 className="h-section">Downstream Consumer Network</h3>
                 </div>
-
-                {/* 12. Activity Stream Timeline */}
-                <div className="card-flat">
-                    <h3 className="h-section" style={{ marginBottom: '2rem' }}>Operational Audit Log</h3>
-                    <div style={{ position: 'relative', paddingLeft: '32px' }}>
-                        <div style={{ position: 'absolute', left: '7px', top: '0', bottom: '0', width: '2px', backgroundColor: 'var(--border-light)' }}></div>
-                        <div style={{ marginBottom: '1.5rem', position: 'relative' }}>
-                            <div style={{ position: 'absolute', left: '-30px', top: '4px', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'var(--color-emerald)', border: '2px solid white' }}></div>
-                            <div style={{ fontSize: '13px', fontWeight: 700 }}>Production Schedule Finalized</div>
-                            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>10:42 AM - AUTO-RESOLVED</div>
-                        </div>
-                        <div style={{ marginBottom: '1.5rem', position: 'relative' }}>
-                            <div style={{ position: 'absolute', left: '-30px', top: '4px', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'var(--color-signal)', border: '2px solid white' }}></div>
-                            <div style={{ fontSize: '13px', fontWeight: 700 }}>Manifest #9921 Dispatched</div>
-                            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>09:15 AM - LOGISTICS LEAD</div>
-                        </div>
-                        <div style={{ position: 'relative' }}>
-                            <div style={{ position: 'absolute', left: '-30px', top: '4px', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#e2e8f0', border: '2px solid white' }}></div>
-                            <div style={{ fontSize: '13px', fontWeight: 700 }}>System Health Check - PASSED</div>
-                            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>06:00 AM - SYSTEM CORE</div>
-                        </div>
-                    </div>
-                </div>
-              </>
+                <table className="table-dense">
+                  <thead>
+                    <tr>
+                      <th>Consumer Name</th>
+                      <th>Location</th>
+                      <th>Active SKUs</th>
+                      <th>Last Order</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {consumerData.map((consumer) => (
+                      <tr key={consumer.name}>
+                        <td style={{ fontWeight: 700 }}>{consumer.name}</td>
+                        <td>{consumer.location}</td>
+                        <td>
+                          <div style={{ display: 'flex', gap: '4px' }}>
+                            {consumer.activeSkus.map(sku => (
+                              <span key={sku} style={{ fontSize: '10px', padding: '2px 6px', backgroundColor: 'var(--bg-secondary)', borderRadius: '4px' }}>{sku}</span>
+                            ))}
+                          </div>
+                        </td>
+                        <td>{consumer.lastOrder}</td>
+                        <td>
+                          <span style={{ 
+                            color: consumer.status === 'Urgent' ? 'var(--color-alert)' : consumer.status === 'Active' ? 'var(--color-emerald)' : 'var(--text-muted)',
+                            fontWeight: 800,
+                            fontSize: '11px'
+                          }}>
+                            {consumer.status.toUpperCase()}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
 
           </div>

@@ -9,26 +9,33 @@ import {
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 
-// Global Hubs Data
-const hubData = [
-  { id: 'asia', name: 'Asia Hub (Singapore)', lat: 1.3521, lng: 103.8198, type: 'Critical', color: '#10b981', size: 1.2 },
-  { id: 'europe', name: 'Europe Hub (Rotterdam)', lat: 51.9225, lng: 4.4792, type: 'Critical', color: '#10b981', size: 1.2 },
-  { id: 'namerica', name: 'N. America Hub (NY)', lat: 40.7128, lng: -74.0060, type: 'Major', color: '#3b82f6', size: 0.8 },
-  { id: 'oceania', name: 'Oceania Hub (Sydney)', lat: -33.8688, lng: 151.2093, type: 'Major', color: '#3b82f6', size: 0.8 },
-  { id: 'mideast', name: 'Middle East Hub (Dubai)', lat: 25.2048, lng: 55.2708, type: 'Major', color: '#3b82f6', size: 0.8 },
+// Global Hubs / Suppliers Data
+const suppliersData = [
+  { id: 'sup1', name: 'TechFlow Systems', region: 'asia', lat: 1.3521, lng: 103.8198, color: '#10b981' },
+  { id: 'sup2', name: 'Global Logistics', region: 'europe', lat: 51.9225, lng: 4.4792, color: '#10b981' },
+  { id: 'sup3', name: 'Nordic Steel', region: 'europe', lat: 59.3293, lng: 18.0686, color: '#10b981' },
+  { id: 'sup4', name: 'Pacific Circuits', region: 'asia', lat: 35.6762, lng: 139.6503, color: '#10b981' },
+  { id: 'sup5', name: 'Atlas Freight', region: 'namerica', lat: 40.7128, lng: -74.0060, color: '#3b82f6' },
+  { id: 'sup6', name: 'Solaris Energy', region: 'oceania', lat: -33.8688, lng: 151.2093, color: '#3b82f6' },
+  { id: 'sup7', name: 'Quantum Chips', region: 'asia', lat: 22.3193, lng: 114.1694, color: '#10b981' },
+  { id: 'sup8', name: 'EuroResin', region: 'europe', lat: 48.8566, lng: 2.3522, color: '#10b981' },
+  { id: 'sup9', name: 'Summit Metals', region: 'namerica', lat: 34.0522, lng: -118.2437, color: '#3b82f6' },
+  { id: 'sup10', name: 'Desert Oasis Hub', region: 'mideast', lat: 25.2048, lng: 55.2708, color: '#3b82f6' },
 ];
 
-const initialArcs = [
-  { startLat: 1.3521, startLng: 103.8198, endLat: 51.9225, endLng: 4.4792, color: ['#3b82f6', '#10b981'] },
-  { startLat: 51.9225, startLng: 4.4792, endLat: 40.7128, endLng: -74.0060, color: ['#3b82f6', '#10b981'] },
-  { startLat: 1.3521, startLng: 103.8198, endLat: -33.8688, endLng: 151.2093, color: ['#3b82f6', '#10b981'] },
-];
+const regionsCoords = {
+    asia: { lat: 1.3521, lng: 103.8198 },
+    europe: { lat: 51.9225, lng: 4.4792 },
+    namerica: { lat: 40.7128, lng: -74.0060 },
+    oceania: { lat: -33.8688, lng: 151.2093 },
+    mideast: { lat: 25.2048, lng: 55.2708 }
+};
 
 export const GlobalSimulation = ({ standalone = false }) => {
   const globeRef = useRef();
   
   // Step 1: User Input States
-  const [supplierName, setSupplierName] = useState('TechFlow Systems');
+  const [selectedSupplierId, setSelectedSupplierId] = useState('sup1');
   const [selectedRegion, setSelectedRegion] = useState('asia');
   const [disruptionType, setDisruptionType] = useState('weather');
   const [isSimulating, setIsSimulating] = useState(false);
@@ -36,15 +43,21 @@ export const GlobalSimulation = ({ standalone = false }) => {
 
   // Simulation Logic Data
   const [results, setResults] = useState(null);
+  const [activeArcs, setActiveArcs] = useState([]);
+
+  const currentSupplier = useMemo(() => suppliersData.find(s => s.id === selectedSupplierId), [selectedSupplierId]);
+
+  // Point globe to supplier when selected
+  useEffect(() => {
+    if (globeRef.current && currentSupplier) {
+        globeRef.current.pointOfView({ lat: currentSupplier.lat, lng: currentSupplier.lng, altitude: 2 }, 1000);
+    }
+  }, [selectedSupplierId]);
 
   const runSimulation = () => {
-    if (!supplierName.trim()) {
-        alert("Please enter a supplier name to simulate.");
-        return;
-    }
-    
     setIsSimulating(true);
     setShowOutput(false);
+    setActiveArcs([]);
     
     // Animate Simulation Delay
     setTimeout(() => {
@@ -55,18 +68,38 @@ export const GlobalSimulation = ({ standalone = false }) => {
             suggestion: ""
         };
 
-        if (disruptionType === 'weather') {
-            res.after = { cost: 11000, time: 9, risk: 'Critical' };
-            res.summary = `Disruption in ${selectedRegion.toUpperCase()} caused by severe cyclone, affecting ${supplierName}'s regional distribution node. Lead time increased by 4 days.`;
-            res.suggestion = `Switch to Alternative Hub (Europe) to bypass ${supplierName}'s impacted ${selectedRegion} zone.`;
-        } else if (disruptionType === 'port') {
-            res.after = { cost: 13500, time: 10, risk: 'High' };
-            res.summary = `Port congestion in ${selectedRegion} has bottlenecked ${supplierName}'s outbound shipments. Operational overhead increased by 35%.`;
-            res.suggestion = `Reroute ${supplierName}'s freight to Secondary Port Hub (Sydney) to reduce bottleneck effects.`;
+        const isEffected = currentSupplier.region === selectedRegion;
+        
+        if (isEffected) {
+            res.after = { cost: 15000, time: 12, risk: 'Critical' };
+            res.summary = `CRITICAL: ${currentSupplier.name} is DIRECTLY impacted by the ${disruptionType} in ${selectedRegion.toUpperCase()}. Supply chain lines are severed.`;
+            res.suggestion = `DANGER: Reroute immediately through Backup Hub (Americas) to avoid the ${selectedRegion} zone.`;
+            
+            // Show Danger Arc (Red) and Alternative Arc (Green)
+            const dangerArc = {
+                startLat: currentSupplier.lat, startLng: currentSupplier.lng,
+                endLat: regionsCoords[selectedRegion].lat, endLng: regionsCoords[selectedRegion].lng,
+                color: '#ef4444' // DANGER RED
+            };
+            const altRegion = selectedRegion === 'asia' ? 'europe' : 'namerica';
+            const safeArc = {
+                startLat: currentSupplier.lat, startLng: currentSupplier.lng,
+                endLat: regionsCoords[altRegion].lat, endLng: regionsCoords[altRegion].lng,
+                color: '#10b981' // SAFE GREEN
+            };
+            setActiveArcs([dangerArc, safeArc]);
         } else {
-            res.after = { cost: 15000, time: 12, risk: 'Severe' };
-            res.summary = `Regional conflict in ${selectedRegion} has forced route closures for ${supplierName}. Strategic cost spike of 50% detected.`;
-            res.suggestion = `Activate Emergency Supply Chain protocol; transition from ${supplierName} to backup Supplier B (Americas).`;
+            res.after = { cost: 10500, time: 6, risk: 'Low' };
+            res.summary = `${currentSupplier.name} is geographically isolated from the ${disruptionType} in ${selectedRegion.toUpperCase()}. Minimal ripple effects detected.`;
+            res.suggestion = `MAINTAIN: Current supply route is safe. Monitoring regional spillover.`;
+            
+            // Show Safe Arc (Green)
+            const safeArc = {
+                startLat: currentSupplier.lat, startLng: currentSupplier.lng,
+                endLat: regionsCoords[currentSupplier.region === 'asia' ? 'europe' : 'asia'].lat, endLng: regionsCoords[currentSupplier.region === 'asia' ? 'europe' : 'asia'].lng,
+                color: '#10b981'
+            };
+            setActiveArcs([safeArc]);
         }
 
         setResults(res);
@@ -74,9 +107,8 @@ export const GlobalSimulation = ({ standalone = false }) => {
         setShowOutput(true);
         
         // Focus Globe on region
-        const regionHub = hubData.find(h => h.id === selectedRegion);
-        if (globeRef.current && regionHub) {
-            globeRef.current.pointOfView({ lat: regionHub.lat, lng: regionHub.lng, altitude: 2 }, 1000);
+        if (globeRef.current) {
+            globeRef.current.pointOfView({ lat: regionsCoords[selectedRegion].lat, lng: regionsCoords[selectedRegion].lng, altitude: 2 }, 1000);
         }
     }, 2000);
   };
@@ -85,20 +117,21 @@ export const GlobalSimulation = ({ standalone = false }) => {
     <div style={{ 
       display: 'flex', 
       height: standalone ? '800px' : 'calc(100vh - 180px)',
-      backgroundColor: '#0f172a', // Deep Navy instead of Black
+      backgroundColor: '#1e293b', // Deep Slate instead of Black
       color: '#fff',
       position: 'relative',
       fontFamily: 'Inter, sans-serif',
       borderRadius: '24px',
       overflow: 'hidden',
-      border: '1px solid rgba(255,255,255,0.05)'
+      border: '1px solid rgba(255,255,255,0.05)',
+      boxShadow: 'inset 0 0 100px rgba(0,0,0,0.5)'
     }}>
       
-      {/* Background Grid Overlay */}
+      {/* Background Pattern */}
       <div style={{ 
           position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', 
-          backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0)',
-          backgroundSize: '40px 40px', pointerEvents: 'none'
+          backgroundImage: 'radial-gradient(circle at center, rgba(59, 130, 246, 0.05) 0%, transparent 70%)',
+          pointerEvents: 'none'
       }}></div>
 
       {/* Floating Header */}
@@ -106,66 +139,66 @@ export const GlobalSimulation = ({ standalone = false }) => {
           position: 'absolute', top: '2rem', left: '50%', transform: 'translateX(-50%)', 
           zIndex: 20, textAlign: 'center', pointerEvents: 'none'
       }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-emerald)', justifyContent: 'center', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#60a5fa', justifyContent: 'center', marginBottom: '8px' }}>
               <Terminal size={18} />
-              <span style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '0.3em' }}>GLOBALCHAIN SIMULATOR V2.4</span>
+              <span style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '0.3em' }}>GLOBALCHAIN SIMULATOR V3.0</span>
           </div>
-          <h2 style={{ fontSize: '28px', fontWeight: 900, letterSpacing: '-0.03em' }}>Supply Chain Stress Test</h2>
+          <h2 style={{ fontSize: '28px', fontWeight: 900, letterSpacing: '-0.03em', color: '#f8fafc' }}>Strategic Disruption Analyst</h2>
       </div>
 
       {/* LEFT: FLOATING INPUT PANEL */}
       <div style={{ 
         position: 'absolute', top: '2rem', left: '2rem', width: '360px', 
-        padding: '2rem', borderRadius: '20px', zIndex: 10,
-        backgroundColor: 'rgba(30, 41, 59, 0.7)',
-        backdropFilter: 'blur(20px)',
+        padding: '2rem', borderRadius: '24px', zIndex: 10,
+        backgroundColor: 'rgba(15, 23, 42, 0.85)',
+        backdropFilter: 'blur(30px)',
         border: '1px solid rgba(255,255,255,0.1)',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
+        boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
         display: 'flex', flexDirection: 'column', gap: '1.5rem'
       }}>
         <div>
-            <label style={{ fontSize: '11px', fontWeight: 800, color: 'var(--color-emerald)', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>Target Supplier</label>
-            <input 
-                type="text" 
-                value={supplierName}
-                onChange={(e) => setSupplierName(e.target.value)}
-                placeholder="Enter supplier name..." 
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(15, 23, 42, 0.5)', color: '#fff', fontSize: '14px', outline: 'none' }}
-            />
-        </div>
-
-        <div>
-            <label style={{ fontSize: '11px', fontWeight: 800, color: '#94a3b8', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>Affected Region</label>
+            <label style={{ fontSize: '11px', fontWeight: 900, color: '#60a5fa', display: 'block', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>1. Select Target Supplier</label>
             <select 
-                value={selectedRegion}
-                onChange={(e) => setSelectedRegion(e.target.value)}
-                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(15, 23, 42, 0.5)', color: '#fff', outline: 'none', cursor: 'pointer' }}
+                value={selectedSupplierId}
+                onChange={(e) => setSelectedSupplierId(e.target.value)}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(30, 41, 59, 0.5)', color: '#fff', fontSize: '14px', outline: 'none', cursor: 'pointer' }}
             >
-                <option value="asia">Asia Pacific (Singapore)</option>
-                <option value="europe">Europe (Rotterdam)</option>
-                <option value="namerica">North America (New York)</option>
-                <option value="oceania">Oceania (Sydney)</option>
-                <option value="mideast">Middle East (Dubai)</option>
+                {suppliersData.map(s => <option key={s.id} value={s.id}>{s.name} ({s.region.toUpperCase()})</option>)}
             </select>
         </div>
 
         <div>
-            <label style={{ fontSize: '11px', fontWeight: 800, color: '#94a3b8', display: 'block', marginBottom: '12px', textTransform: 'uppercase' }}>Disruption Event</label>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <label style={{ fontSize: '11px', fontWeight: 900, color: '#94a3b8', display: 'block', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>2. Disrupt Region</label>
+            <select 
+                value={selectedRegion}
+                onChange={(e) => setSelectedRegion(e.target.value)}
+                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(30, 41, 59, 0.5)', color: '#fff', outline: 'none', cursor: 'pointer' }}
+            >
+                <option value="asia">Asia Pacific</option>
+                <option value="europe">Europe Hub</option>
+                <option value="namerica">North America</option>
+                <option value="oceania">Oceania Region</option>
+                <option value="mideast">Middle East Hub</option>
+            </select>
+        </div>
+
+        <div>
+            <label style={{ fontSize: '11px', fontWeight: 900, color: '#94a3b8', display: 'block', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>3. Disruption Event</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {['weather', 'port', 'conflict'].map((type) => (
                     <button 
                         key={type}
                         onClick={() => setDisruptionType(type)}
                         style={{ 
-                            display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '12px', 
-                            border: disruptionType === type ? `2px solid ${type === 'weather' ? 'var(--color-emerald)' : type === 'port' ? 'var(--color-signal)' : '#ef4444'}` : '1px solid rgba(255,255,255,0.05)', 
-                            backgroundColor: disruptionType === type ? 'rgba(255,255,255,0.05)' : 'transparent', color: '#fff', cursor: 'pointer', transition: 'all 0.2s ease'
+                            display: 'flex', alignItems: 'center', gap: '12px', padding: '14px', borderRadius: '12px', 
+                            border: disruptionType === type ? `2px solid ${type === 'weather' ? '#60a5fa' : type === 'port' ? '#fbbf24' : '#f87171'}` : '1px solid rgba(255,255,255,0.05)', 
+                            backgroundColor: disruptionType === type ? 'rgba(255,255,255,0.08)' : 'transparent', color: '#f8fafc', cursor: 'pointer', transition: 'all 0.2s ease'
                         }}
                     >
-                        {type === 'weather' && <CloudRain size={18} color="var(--color-emerald)" />}
-                        {type === 'port' && <Ship size={18} color="var(--color-signal)" />}
-                        {type === 'conflict' && <ShieldAlert size={18} color="#ef4444" />}
-                        <span style={{ fontSize: '13px', fontWeight: 600, textTransform: 'capitalize' }}>{type} Disruption</span>
+                        {type === 'weather' && <CloudRain size={18} color="#60a5fa" />}
+                        {type === 'port' && <Ship size={18} color="#fbbf24" />}
+                        {type === 'conflict' && <ShieldAlert size={18} color="#f87171" />}
+                        <span style={{ fontSize: '13px', fontWeight: 700, textTransform: 'capitalize' }}>{type} Disruption</span>
                     </button>
                 ))}
             </div>
@@ -175,10 +208,10 @@ export const GlobalSimulation = ({ standalone = false }) => {
             variant="primary" 
             onClick={runSimulation}
             disabled={isSimulating}
-            style={{ height: '54px', fontSize: '15px', fontWeight: 900, marginTop: '0.5rem', backgroundColor: 'var(--color-emerald)', borderRadius: '14px', boxShadow: '0 10px 20px rgba(16, 185, 129, 0.2)' }}
+            style={{ height: '58px', fontSize: '16px', fontWeight: 900, marginTop: '0.5rem', backgroundColor: '#3b82f6', borderRadius: '16px', border: 'none', boxShadow: '0 10px 30px rgba(59, 130, 246, 0.4)' }}
         >
             {isSimulating ? <RefreshCw className="spin" size={20} /> : <Play size={20} />} 
-            {isSimulating ? 'Processing Models...' : 'Run Simulation'}
+            {isSimulating ? 'Processing Vectors...' : 'Execute Stress Test'}
         </Button>
       </div>
 
@@ -188,26 +221,31 @@ export const GlobalSimulation = ({ standalone = false }) => {
             ref={globeRef}
             globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
             backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
-            pointsData={hubData}
-            pointColor={(d) => (isSimulating || showOutput) && d.id === selectedRegion ? '#ef4444' : '#3b82f6'}
+            pointsData={suppliersData}
+            pointColor={(d) => d.id === selectedSupplierId ? '#facc15' : d.color}
             pointAltitude={0.1}
-            pointRadius={0.5}
+            pointRadius={(d) => d.id === selectedSupplierId ? 1.5 : 0.6}
             pointLabel="name"
-            arcsData={initialArcs}
-            arcColor={() => 'rgba(59, 130, 246, 0.3)'}
-            arcDashLength={0.4}
-            arcDashGap={2}
-            arcDashAnimateTime={2000}
-            atmosphereColor="#3b82f6"
+            arcsData={activeArcs}
+            arcColor="color"
+            arcDashLength={0.5}
+            arcDashGap={1}
+            arcDashAnimateTime={1500}
+            arcStroke={1}
+            atmosphereColor="#60a5fa"
             atmosphereDaylight={false}
             width={standalone ? 1200 : undefined}
             height={standalone ? 800 : undefined}
         />
         
-        {/* Animated Ripple Effect on Highlighted Node */}
+        {/* Ripple Effect for selected region */}
         {(isSimulating || showOutput) && (
             <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}>
-                <div style={{ width: '60px', height: '60px', borderRadius: '50%', border: '3px solid #ef4444', animation: 'ripple 1.5s cubic-bezier(0, 0, 0.2, 1) infinite' }}></div>
+                <div style={{ 
+                    width: '100px', height: '100px', borderRadius: '50%', 
+                    border: `4px solid ${currentSupplier.region === selectedRegion ? '#f87171' : '#60a5fa'}`, 
+                    animation: 'ripple 2s cubic-bezier(0, 0, 0.2, 1) infinite' 
+                }}></div>
             </div>
         )}
       </div>
@@ -215,83 +253,83 @@ export const GlobalSimulation = ({ standalone = false }) => {
       {/* RIGHT: FLOATING OUTPUT PANEL */}
       {showOutput && results && (
           <div style={{ 
-            position: 'absolute', top: '2rem', right: '2rem', width: '400px', 
-            padding: '2rem', borderRadius: '20px', zIndex: 10,
-            backgroundColor: 'rgba(30, 41, 59, 0.8)',
-            backdropFilter: 'blur(30px)',
+            position: 'absolute', top: '2rem', right: '2rem', width: '420px', 
+            padding: '2rem', borderRadius: '24px', zIndex: 10,
+            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+            backdropFilter: 'blur(40px)',
             border: '1px solid rgba(255,255,255,0.1)',
-            boxShadow: '0 20px 50px rgba(0,0,0,0.4)',
-            display: 'flex', flexDirection: 'column', gap: '2rem',
-            animation: 'slideIn 0.5s ease-out'
+            boxShadow: '0 30px 60px rgba(0,0,0,0.6)',
+            display: 'flex', flexDirection: 'column', gap: '1.8rem',
+            animation: 'slideIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <BarChart3 size={20} color="var(--color-signal)" />
-                    <h3 style={{ fontSize: '16px', fontWeight: 800 }}>Simulation Output</h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <Activity size={20} color="#60a5fa" />
+                    <h3 style={{ fontSize: '18px', fontWeight: 900, letterSpacing: '-0.02em' }}>Impact Assessment</h3>
                 </div>
-                <button onClick={() => setShowOutput(false)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}><X size={20} /></button>
+                <button onClick={() => setShowOutput(false)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}><X size={24} /></button>
             </div>
 
             <section>
-                <div style={{ border: '1px solid rgba(255,255,255,0.05)', borderRadius: '14px', overflow: 'hidden' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                <div style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', overflow: 'hidden', backgroundColor: 'rgba(255,255,255,0.02)' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
                         <thead>
-                            <tr style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
-                                <th style={{ padding: '14px', textAlign: 'left' }}>Metric</th>
-                                <th style={{ padding: '14px', textAlign: 'center' }}>Before</th>
-                                <th style={{ padding: '14px', textAlign: 'center' }}>After</th>
+                            <tr style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}>
+                                <th style={{ padding: '16px', textAlign: 'left' }}>Variable</th>
+                                <th style={{ padding: '16px', textAlign: 'center' }}>Baseline</th>
+                                <th style={{ padding: '16px', textAlign: 'center' }}>Projected</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td style={{ padding: '14px', color: '#94a3b8', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>Cost</td>
-                                <td style={{ padding: '14px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>₹{results.before.cost.toLocaleString()}</td>
-                                <td style={{ padding: '14px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', color: '#ef4444', fontWeight: 800 }}>₹{results.after.cost.toLocaleString()}</td>
+                                <td style={{ padding: '16px', color: '#94a3b8', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>Lead Cost</td>
+                                <td style={{ padding: '16px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>₹{results.before.cost.toLocaleString()}</td>
+                                <td style={{ padding: '16px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', color: results.after.risk === 'Low' ? '#10b981' : '#f87171', fontWeight: 900 }}>₹{results.after.cost.toLocaleString()}</td>
                             </tr>
                             <tr>
-                                <td style={{ padding: '14px', color: '#94a3b8', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>Delivery</td>
-                                <td style={{ padding: '14px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>{results.before.time}d</td>
-                                <td style={{ padding: '14px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', color: '#ef4444', fontWeight: 800 }}>{results.after.time}d</td>
+                                <td style={{ padding: '16px', color: '#94a3b8', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>Cycle Time</td>
+                                <td style={{ padding: '16px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>{results.before.time}d</td>
+                                <td style={{ padding: '16px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', color: results.after.risk === 'Low' ? '#10b981' : '#f87171', fontWeight: 900 }}>{results.after.time}d</td>
                             </tr>
                             <tr>
-                                <td style={{ padding: '14px', color: '#94a3b8' }}>Risk</td>
-                                <td style={{ padding: '14px', textAlign: 'center', color: '#10b981', fontWeight: 800 }}>{results.before.risk}</td>
-                                <td style={{ padding: '14px', textAlign: 'center', color: '#ef4444', fontWeight: 800 }}>{results.after.risk}</td>
+                                <td style={{ padding: '16px', color: '#94a3b8' }}>Risk Level</td>
+                                <td style={{ padding: '16px', textAlign: 'center', color: '#10b981', fontWeight: 900 }}>STABLE</td>
+                                <td style={{ padding: '16px', textAlign: 'center', color: results.after.risk === 'Low' ? '#10b981' : '#f87171', fontWeight: 900 }}>{results.after.risk.toUpperCase()}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </section>
 
-            <section style={{ padding: '1.5rem', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: '14px', borderLeft: '4px solid #ef4444' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.75rem' }}>
-                    <AlertCircle size={18} color="#ef4444" />
-                    <h4 style={{ fontSize: '11px', fontWeight: 900, color: '#ef4444', letterSpacing: '0.1em' }}>IMPACT SUMMARY</h4>
+            <section style={{ padding: '1.5rem', backgroundColor: results.after.risk === 'Low' ? 'rgba(16, 185, 129, 0.08)' : 'rgba(239, 68, 68, 0.1)', borderRadius: '16px', borderLeft: `6px solid ${results.after.risk === 'Low' ? '#10b981' : '#ef4444'}` }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                    <AlertCircle size={20} color={results.after.risk === 'Low' ? '#10b981' : '#ef4444'} />
+                    <h4 style={{ fontSize: '11px', fontWeight: 900, color: results.after.risk === 'Low' ? '#10b981' : '#ef4444', letterSpacing: '0.15em' }}>SITUATION ANALYSIS</h4>
                 </div>
-                <p style={{ fontSize: '14px', lineHeight: '1.6', margin: 0, fontWeight: 500 }}>"{results.summary}"</p>
+                <p style={{ fontSize: '14px', lineHeight: '1.7', margin: 0, fontWeight: 600 }}>"{results.summary}"</p>
             </section>
 
-            <section style={{ padding: '1.5rem', backgroundColor: 'rgba(16, 185, 129, 0.1)', borderRadius: '14px', borderLeft: '4px solid #10b981' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.75rem' }}>
-                    <RefreshCw size={18} color="#10b981" />
-                    <h4 style={{ fontSize: '11px', fontWeight: 900, color: '#10b981', letterSpacing: '0.1em' }}>SMART SUGGESTION</h4>
+            <section style={{ padding: '1.5rem', backgroundColor: 'rgba(96, 165, 250, 0.1)', borderRadius: '16px', borderLeft: '6px solid #60a5fa' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                    <RefreshCw size={20} color="#60a5fa" />
+                    <h4 style={{ fontSize: '11px', fontWeight: 900, color: '#60a5fa', letterSpacing: '0.15em' }}>STRATEGIC ADVISORY</h4>
                 </div>
-                <p style={{ fontSize: '14px', lineHeight: '1.6', margin: 0, fontWeight: 700 }}>👉 {results.suggestion}</p>
+                <p style={{ fontSize: '14px', lineHeight: '1.7', margin: 0, fontWeight: 800, color: '#e2e8f0' }}>👉 {results.suggestion}</p>
             </section>
           </div>
       )}
 
       <style>{`
         @keyframes ripple {
-            0% { transform: scale(1); opacity: 1; }
-            70%, 100% { transform: scale(4); opacity: 0; }
+            0% { transform: scale(1); opacity: 0.8; }
+            80%, 100% { transform: scale(4); opacity: 0; }
         }
         @keyframes slideIn {
-            from { transform: translateX(100px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from { transform: translateX(120px); opacity: 0; filter: blur(10px); }
+            to { transform: translateX(0); opacity: 1; filter: blur(0); }
         }
         .spin {
-            animation: spin 1s linear infinite;
+            animation: spin 1.5s linear infinite;
         }
         @keyframes spin {
             from { transform: rotate(0deg); }

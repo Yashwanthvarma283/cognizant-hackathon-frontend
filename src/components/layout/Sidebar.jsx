@@ -112,21 +112,21 @@ export const Sidebar = ({ role, activeTab, onTabChange }) => {
         
         {role === 'supplier' && (
           <>
-            <button style={navItemStyle(activeTab === 'overview')} onClick={() => onTabChange('overview')}>
-              {activeTab === 'overview' && <ActiveIndicator />}
-              <Zap size={18} /> Overview
+            <button style={navItemStyle(activeTab === 'sku_management')} onClick={() => onTabChange('sku_management')}>
+              {activeTab === 'sku_management' && <ActiveIndicator />}
+              <Package size={18} /> SKU Management
             </button>
-            <button style={navItemStyle(activeTab === 'inventory')} onClick={() => onTabChange('inventory')}>
-              {activeTab === 'inventory' && <ActiveIndicator />}
-              <Package size={18} /> Inventory & Supply
+            <button style={navItemStyle(activeTab === 'capacity')} onClick={() => onTabChange('capacity')}>
+              {activeTab === 'capacity' && <ActiveIndicator />}
+              <Zap size={18} /> Daily Capacity
             </button>
-            <button style={navItemStyle(activeTab === 'analytics')} onClick={() => onTabChange('analytics')}>
-              {activeTab === 'analytics' && <ActiveIndicator />}
-              <Activity size={18} /> Production Analytics
+            <button style={navItemStyle(activeTab === 'cycles')} onClick={() => onTabChange('cycles')}>
+              {activeTab === 'cycles' && <ActiveIndicator />}
+              <Activity size={18} /> Production Cycles
             </button>
-            <button style={navItemStyle(activeTab === 'intelligence')} onClick={() => onTabChange('intelligence')}>
-              {activeTab === 'intelligence' && <ActiveIndicator />}
-              <Bell size={18} /> Intelligence & Alerts
+            <button style={navItemStyle(activeTab === 'consumers')} onClick={() => onTabChange('consumers')}>
+              {activeTab === 'consumers' && <ActiveIndicator />}
+              <Users size={18} /> Consumer List
             </button>
           </>
         )}
