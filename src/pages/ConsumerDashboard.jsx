@@ -91,9 +91,14 @@ export const ConsumerDashboard = () => {
             )}
 
             {activeTab === 'request' && (
-              <div className="grid-main" style={{ maxWidth: '600px', margin: '0 auto', width: '100%' }}>
+              <div className="grid-main grid-cols-2" style={{ gridTemplateColumns: '1fr 1fr' }}>
+                 
+                 {/* 1. Manual Product Request Form */}
                  <div className="card-flat" style={{ height: 'fit-content' }}>
-                    <h3 className="h-section" style={{ marginBottom: '1.5rem' }}>New Product Requisition</h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem' }}>
+                        <PlusCircle size={20} color="var(--color-signal)" />
+                        <h3 className="h-section" style={{ marginBottom: 0 }}>Manual Entry</h3>
+                    </div>
                     <form onSubmit={handleAddRequest} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                         <div>
                             <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Product Name</label>
@@ -107,7 +112,7 @@ export const ConsumerDashboard = () => {
                             />
                         </div>
                         <div>
-                            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Quantity Needed</label>
+                            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Quantity</label>
                             <input 
                                 type="number" 
                                 value={reqQty}
@@ -118,7 +123,7 @@ export const ConsumerDashboard = () => {
                             />
                         </div>
                         <div>
-                            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Delivery Timeline</label>
+                            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Timeline</label>
                             <select 
                                 value={reqTime}
                                 onChange={(e) => setReqTime(e.target.value)}
@@ -129,8 +134,51 @@ export const ConsumerDashboard = () => {
                                 <option value="Urgent (3 Days)">Urgent (3 Days)</option>
                             </select>
                         </div>
-                        <Button variant="primary" style={{ marginTop: '0.5rem', width: '100%' }} type="submit">Add to Inventory & Analyze</Button>
+                        <Button variant="primary" style={{ marginTop: '0.5rem', width: '100%' }} type="submit">Add to Requisition</Button>
                     </form>
+                 </div>
+
+                 {/* 2. Drag & Drop CSV Entry */}
+                 <div className="card-flat" style={{ height: 'fit-content' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem' }}>
+                        <UploadCloud size={20} color="var(--color-emerald)" />
+                        <h3 className="h-section" style={{ marginBottom: 0 }}>Bulk Import</h3>
+                    </div>
+                    <div 
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                            e.preventDefault();
+                            // Mock bulk import
+                            const bulkItems = [
+                                { id: Date.now(), name: 'Copper Wiring', quantity: 5000, timeline: 'Fast (7 Days)', supplier: 'Awaiting Selection', status: 'Pending', shippingCost: 0 },
+                                { id: Date.now() + 1, name: 'Glass Panes', quantity: 200, timeline: 'Standard (14 Days)', supplier: 'Awaiting Selection', status: 'Pending', shippingCost: 0 }
+                            ];
+                            setRequestedProducts([...bulkItems, ...requestedProducts]);
+                            alert('Bulk Import Successful: 2 items added from CSV.');
+                        }}
+                        style={{ 
+                            padding: '3rem 2rem', border: '2px dashed var(--border-light)', borderRadius: '12px', 
+                            textAlign: 'center', backgroundColor: 'var(--bg-secondary)', cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--color-emerald)'}
+                        onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border-light)'}
+                    >
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                            <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Database size={24} color="var(--color-emerald)" />
+                            </div>
+                            <div>
+                                <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>Drag & Drop CSV</div>
+                                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Fast enter products and suppliers list</div>
+                            </div>
+                            <Button variant="ghost" style={{ fontSize: '11px', border: '1px solid var(--border-light)' }}>Browse Files</Button>
+                        </div>
+                    </div>
+                    
+                    <div style={{ marginTop: '1.5rem', padding: '1rem', backgroundColor: '#f8fafc', borderRadius: '8px', fontSize: '11px', color: 'var(--text-secondary)' }}>
+                        <strong>Tip:</strong> Upload a CSV with columns <code>product_name</code>, <code>quantity</code>, and <code>delivery_time</code> for immediate parsing.
+                    </div>
                  </div>
               </div>
             )}
