@@ -8,7 +8,8 @@ import {
 } from 'recharts';
 import { 
   Globe, Cpu, Zap, Package, Activity, Bell, Target, 
-  Clock, Database, TrendingUp, AlertTriangle, CheckCircle2 
+  Clock, Database, TrendingUp, AlertTriangle, CheckCircle2,
+  Users
 } from 'lucide-react';
 
 const skuData = [
