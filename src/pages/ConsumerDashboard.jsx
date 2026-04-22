@@ -6,7 +6,7 @@ import { Button } from '../components/ui/Button';
 import { 
   Package, ShieldCheck, Activity, Share2, Database, Network, 
   Target, AlertTriangle, Clock, BarChart3, UploadCloud, Bell, CheckCircle2, TrendingUp, DollarSign,
-  PlusCircle, Trash2, Edit3, XCircle, Users, Truck, Info, Globe, AlertCircle, Search
+  PlusCircle, Trash2, Edit3, XCircle, Users, Truck, Info, Globe, AlertCircle, Search, Filter
 } from 'lucide-react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { GlobalSimulation } from '../components/simulation/GlobalSimulation';
