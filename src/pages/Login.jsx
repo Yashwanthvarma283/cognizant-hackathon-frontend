@@ -1,12 +1,11 @@
-import React from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
-import { Activity, Lock } from 'lucide-react';
+import { Activity, ChevronDown } from 'lucide-react';
 
 export const Login = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const role = searchParams.get('role') || 'consumer';
+  const [role, setRole] = useState('consumer');
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -30,16 +29,57 @@ export const Login = () => {
       </header>
 
       <main style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-        <div style={{ width: '100%', maxWidth: '400px' }}>
+        <div style={{ width: '100%', maxWidth: '420px' }}>
             
             <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
                 <h2 className="h-section" style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>Login</h2>
                 <p className="text-sub" style={{ fontSize: '14px' }}>Please enter your details to continue.</p>
             </div>
 
-            <div className="card-flat" style={{ padding: '2.5rem', backgroundColor: 'white' }}>
+            <div 
+              className="card-flat" 
+              style={{ 
+                padding: '3rem', 
+                backgroundColor: 'white', 
+                borderRadius: '16px',
+                boxShadow: '0 10px 40px -10px rgba(0,0,0,0.08)',
+                border: '1px solid var(--border-light)'
+              }}
+            >
                 <form onSubmit={handleLogin}>
-                    <div style={{ marginBottom: '1.25rem' }}>
+                    
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                            Platform Role
+                        </label>
+                        <div style={{ position: 'relative' }}>
+                            <select 
+                                value={role} 
+                                onChange={(e) => setRole(e.target.value)}
+                                style={{ 
+                                    width: '100%', 
+                                    padding: '12px 16px', 
+                                    borderRadius: '8px', 
+                                    border: '1px solid var(--border-light)', 
+                                    fontSize: '15px', 
+                                    outline: 'none', 
+                                    appearance: 'none', 
+                                    backgroundColor: 'white', 
+                                    cursor: 'pointer',
+                                    fontWeight: 500
+                                }}
+                            >
+                                <option value="consumer">Consumer</option>
+                                <option value="supplier">Supplier</option>
+                                <option value="admin">System Admin</option>
+                            </select>
+                            <div style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--text-secondary)' }}>
+                                <ChevronDown size={18} />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={{ marginBottom: '1.5rem' }}>
                         <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>
                             Email Address
                         </label>
@@ -66,7 +106,7 @@ export const Login = () => {
                     <Button 
                         type="submit" 
                         variant="primary" 
-                        style={{ width: '100%', height: '3.5rem', fontSize: '15px', fontWeight: 700, backgroundColor: 'var(--text-primary)', color: 'white', marginTop: '1rem' }}
+                        style={{ width: '100%', height: '3.5rem', fontSize: '15px', fontWeight: 700, backgroundColor: 'var(--text-primary)', color: 'white', marginTop: '1rem', borderRadius: '8px' }}
                     >
                         Sign In
                     </Button>

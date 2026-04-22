@@ -18,32 +18,53 @@ export const Landing = () => {
   const navigate = useNavigate();
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'white', overflowX: 'hidden' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: 'white', overflowX: 'hidden', position: 'relative' }}>
       
+      {/* Animated SVG Background */}
+      <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0, opacity: 0.04 }}>
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+              <path d="M 60 0 L 0 0 0 60" fill="none" stroke="black" strokeWidth="1"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+          <path d="M -100 200 Q 300 400 700 200 T 1500 300" fill="none" stroke="black" strokeWidth="3" strokeDasharray="10,10">
+            <animate attributeName="stroke-dashoffset" from="0" to="20" dur="1s" repeatCount="indefinite" />
+          </path>
+        </svg>
+      </div>
+
       {/* Strict Minimal Inline Header */}
-      <header className="container-centered" style={{ height: '5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid var(--border-light)' }}>
+      <header className="container-centered" style={{ height: '5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid var(--border-light)', position: 'relative', zIndex: 1 }}>
         <div style={{ fontWeight: 700, fontSize: '18px', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Activity color="var(--color-emerald)" size={20} />
             NODE ANALYTICS
         </div>
       </header>
 
-      <main className="container-centered" style={{ padding: 'var(--spacing-lg) 2rem', textAlign: 'center' }}>
+      <main className="container-centered" style={{ padding: 'var(--spacing-lg) 2rem', textAlign: 'center', position: 'relative', zIndex: 1 }}>
         
         {/* Core Hero Stack */}
         <section style={{ maxWidth: '48rem', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-lg)' }}>
             
             <h1 className="h-hero">
-                Engineered for Global Supply Chain Resilience.
+                Node Analytics: Supply Chain Resilience
             </h1>
             
             <p className="text-sub" style={{ maxWidth: '38rem' }}>
-                Map thousands of vendor nodes, identify critical bottleneck risks, and 
-                run multi-tier stress simulations in seconds.
+                Real-time node mapping and risk simulation for the modern enterprise.
             </p>
 
+            <Button 
+                onClick={() => navigate('/login')} 
+                style={{ marginTop: '1rem', padding: '0.75rem 2rem', fontSize: '16px', fontWeight: 600, display: 'flex', alignItems: 'center' }}
+            >
+                Get Started <ArrowRight size={18} style={{ marginLeft: '8px' }} />
+            </Button>
+
             {/* Role-Based Login Options */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', width: '100%', maxWidth: '42rem', marginTop: '1.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', width: '100%', maxWidth: '42rem', marginTop: '3rem' }}>
                 <div 
                     onClick={() => navigate('/login?role=consumer')} 
                     className="card-flat" 

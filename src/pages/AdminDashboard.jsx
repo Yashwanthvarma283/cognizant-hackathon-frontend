@@ -16,43 +16,48 @@ export const AdminDashboard = () => {
           
           <div className="grid-main">
             
-            <div className="grid-main grid-cols-4">
-              <KPICard title="System Uptime" value="99.98%" trend="Nominal" isUp={true} color="emerald" data={sparkData} />
-              <KPICard title="Total mesh size" value="4.2 TB" trend="Synced" isUp={true} color="emerald" data={sparkData} />
-              <KPICard title="Security Gates" value="Active" trend="L5" isUp={true} color="emerald" data={sparkData} />
-              <KPICard title="Logic Latency" value="0.4ms" trend="Steady" isUp={true} color="emerald" data={sparkData} />
+            <div className="grid-main" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+              <KPICard title="Server Health" value="99.98%" trend="Optimal" isUp={true} color="emerald" data={sparkData} />
+              <KPICard title="Active Users" value="1,423" trend="+12%" isUp={true} color="emerald" data={sparkData} />
+              <KPICard title="Database Load" value="42%" trend="Stable" isUp={true} color="emerald" data={sparkData} />
             </div>
 
             <div className="card-flat">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                <h2 className="h-section">Access Management Node</h2>
+                <h2 className="h-section">User Management</h2>
                 <div style={{ display: 'flex', gap: '8px' }}>
                     <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--color-emerald)' }}></div>
-                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-emerald)' }}>SECURE CHANNEL</span>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-emerald)' }}>ACTIVE ROSTER</span>
                 </div>
               </div>
               
               <table className="table-dense">
                 <thead>
                   <tr>
-                    <th>Operator ID</th>
-                    <th>Signal Level</th>
-                    <th>Audit Status</th>
-                    <th>Authorization</th>
+                    <th>User Name</th>
+                    <th>Role</th>
+                    <th>Last Login</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td><span style={{ fontWeight: 700 }}>USR-8821</span> (Root)</td>
-                    <td>Level 5 (Full)</td>
-                    <td><span style={{ color: 'var(--color-emerald)' }}>CLEARED</span></td>
-                    <td><span style={{ fontSize: '12px', fontWeight: 700 }}>2FA ENABLED</span></td>
+                    <td><span style={{ fontWeight: 700 }}>Sarah Jenkins</span></td>
+                    <td><span style={{ padding: '4px 8px', borderRadius: '4px', backgroundColor: '#f1f5f9', fontSize: '11px', fontWeight: 600 }}>System Admin</span></td>
+                    <td>2 mins ago</td>
+                    <td><button style={{ background: 'none', border: 'none', color: 'var(--color-emerald)', fontWeight: 600, cursor: 'pointer', fontSize: '12px' }}>Edit Access</button></td>
                   </tr>
                   <tr>
-                    <td><span style={{ fontWeight: 700 }}>USR-4412</span> (Analyst)</td>
-                    <td>Level 4 (Regional)</td>
-                    <td><span style={{ color: 'var(--color-emerald)' }}>CLEARED</span></td>
-                    <td><span style={{ fontSize: '12px', fontWeight: 700 }}>2FA ENABLED</span></td>
+                    <td><span style={{ fontWeight: 700 }}>Michael Chen</span></td>
+                    <td><span style={{ padding: '4px 8px', borderRadius: '4px', backgroundColor: '#f1f5f9', fontSize: '11px', fontWeight: 600 }}>Supplier</span></td>
+                    <td>1 hour ago</td>
+                    <td><button style={{ background: 'none', border: 'none', color: 'var(--color-emerald)', fontWeight: 600, cursor: 'pointer', fontSize: '12px' }}>Edit Access</button></td>
+                  </tr>
+                  <tr>
+                    <td><span style={{ fontWeight: 700 }}>Elena Rostova</span></td>
+                    <td><span style={{ padding: '4px 8px', borderRadius: '4px', backgroundColor: '#f1f5f9', fontSize: '11px', fontWeight: 600 }}>Consumer</span></td>
+                    <td>3 hours ago</td>
+                    <td><button style={{ background: 'none', border: 'none', color: 'var(--color-emerald)', fontWeight: 600, cursor: 'pointer', fontSize: '12px' }}>Edit Access</button></td>
                   </tr>
                 </tbody>
               </table>
