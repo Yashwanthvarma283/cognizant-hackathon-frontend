@@ -132,17 +132,28 @@ export const Sidebar = ({ role, activeTab, onTabChange }) => {
         )}
 
         {role === 'admin' && (
-          <NavLink 
-            to="/dashboard/admin" 
-            style={({isActive}) => navItemStyle(isActive)}
-          >
-            {({isActive}) => (
-              <>
-                {isActive && <ActiveIndicator />}
-                <Settings size={18} /> System Core
-              </>
-            )}
-          </NavLink>
+          <>
+            <button style={navItemStyle(activeTab === 'overview')} onClick={() => onTabChange('overview')}>
+              {activeTab === 'overview' && <ActiveIndicator />}
+              <Database size={18} /> System Overview
+            </button>
+            <button style={navItemStyle(activeTab === 'consumers')} onClick={() => onTabChange('consumers')}>
+              {activeTab === 'consumers' && <ActiveIndicator />}
+              <Users size={18} /> Consumer Management
+            </button>
+            <button style={navItemStyle(activeTab === 'suppliers')} onClick={() => onTabChange('suppliers')}>
+              {activeTab === 'suppliers' && <ActiveIndicator />}
+              <Truck size={18} /> Supplier Management
+            </button>
+            <button style={navItemStyle(activeTab === 'audit')} onClick={() => onTabChange('audit')}>
+              {activeTab === 'audit' && <ActiveIndicator />}
+              <FileText size={18} /> Audit Logs
+            </button>
+            <button style={navItemStyle(activeTab === 'settings')} onClick={() => onTabChange('settings')}>
+              {activeTab === 'settings' && <ActiveIndicator />}
+              <Settings size={18} /> System Settings
+            </button>
+          </>
         )}
       </nav>
 
