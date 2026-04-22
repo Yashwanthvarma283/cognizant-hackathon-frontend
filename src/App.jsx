@@ -13,9 +13,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/consumer" element={<ConsumerDashboard />} />
-        <Route path="/supplier" element={<SupplierDashboard />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/dashboard/consumer" element={<ConsumerDashboard />} />
+        <Route path="/dashboard/supplier" element={<SupplierDashboard />} />
+        <Route path="/dashboard/admin" element={<AdminDashboard />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

@@ -9,9 +9,9 @@ export const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (role === 'consumer') navigate('/consumer');
-    if (role === 'supplier') navigate('/supplier');
-    if (role === 'admin') navigate('/admin');
+    if (role === 'consumer') navigate('/dashboard/consumer');
+    if (role === 'supplier') navigate('/dashboard/supplier');
+    if (role === 'admin') navigate('/dashboard/admin');
   };
 
   const getRoleTitle = () => {
@@ -30,7 +30,7 @@ export const Login = () => {
           style={{ cursor: 'pointer', fontWeight: 700, fontSize: '18px', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '8px' }}
         >
             <Activity color="var(--color-emerald)" size={20} />
-            NODE ANALYTICS
+            GLOBALCHAIN
         </div>
       </header>
 
@@ -97,7 +97,7 @@ export const Login = () => {
       </main>
 
       <footer style={{ padding: '1.5rem', textAlign: 'center', fontSize: '12px', color: 'var(--text-muted)' }}>
-         © 2026 Node Analytics Platform
+         © 2026 GlobalChain Platform
       </footer>
     </div>
   );
