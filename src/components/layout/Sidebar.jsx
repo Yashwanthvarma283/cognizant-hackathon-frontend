@@ -8,11 +8,14 @@ import {
   FileText, 
   Settings, 
   LogOut,
-  Target
+  Target,
+  Activity,
+  BarChart3,
+  Database
 } from 'lucide-react';
 import './layout.css';
 
-export const Sidebar = ({ role }) => {
+export const Sidebar = ({ role, activeTab, onTabChange }) => {
   const getRoleAccent = () => {
     switch (role) {
       case 'consumer': return 'var(--color-emerald)';
@@ -39,13 +42,36 @@ export const Sidebar = ({ role }) => {
       
       <nav className="sidebar-nav" style={{ padding: '1.5rem 1rem' }}>
         {role === 'consumer' && (
-          <NavLink 
-            to="/consumer" 
-            className={({isActive}) => isActive ? "nav-link active" : "nav-link"} 
-            style={({isActive}) => isActive ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)' } : { color: '#94a3b8' }}
-          >
-            <Zap size={18} /> Signal Monitor
-          </NavLink>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <button 
+              className={`nav-link ${activeTab === 'overview' ? 'active' : ''}`} 
+              onClick={() => onTabChange('overview')}
+              style={activeTab === 'overview' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <Zap size={18} /> Overview
+            </button>
+            <button 
+              className={`nav-link ${activeTab === 'ai' ? 'active' : ''}`} 
+              onClick={() => onTabChange('ai')}
+              style={activeTab === 'ai' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <Activity size={18} /> AI & Simulation
+            </button>
+            <button 
+              className={`nav-link ${activeTab === 'analytics' ? 'active' : ''}`} 
+              onClick={() => onTabChange('analytics')}
+              style={activeTab === 'analytics' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <BarChart3 size={18} /> Analytics
+            </button>
+            <button 
+              className={`nav-link ${activeTab === 'data' ? 'active' : ''}`} 
+              onClick={() => onTabChange('data')}
+              style={activeTab === 'data' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <Database size={18} /> Data Management
+            </button>
+          </div>
         )}
         
         {role === 'supplier' && (
