@@ -8,11 +8,17 @@ import {
   FileText, 
   Settings, 
   LogOut,
-  Target
+  Target,
+  Activity,
+  BarChart3,
+  Database,
+  ShoppingCart,
+  Bell,
+  PlusCircle
 } from 'lucide-react';
 import './layout.css';
 
-export const Sidebar = ({ role }) => {
+export const Sidebar = ({ role, activeTab, onTabChange }) => {
   const getRoleAccent = () => {
     switch (role) {
       case 'consumer': return 'var(--color-emerald)';
@@ -39,23 +45,90 @@ export const Sidebar = ({ role }) => {
       
       <nav className="sidebar-nav" style={{ padding: '1.5rem 1rem' }}>
         {role === 'consumer' && (
-          <NavLink 
-            to="/consumer" 
-            className={({isActive}) => isActive ? "nav-link active" : "nav-link"} 
-            style={({isActive}) => isActive ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)' } : { color: '#94a3b8' }}
-          >
-            <Zap size={18} /> Signal Monitor
-          </NavLink>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <button 
+              className={`nav-link ${activeTab === 'overview' ? 'active' : ''}`} 
+              onClick={() => onTabChange('overview')}
+              style={activeTab === 'overview' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <Zap size={18} /> Overview
+            </button>
+            <button 
+              className={`nav-link ${activeTab === 'request' ? 'active' : ''}`} 
+              onClick={() => onTabChange('request')}
+              style={activeTab === 'request' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <PlusCircle size={18} /> Requisition
+            </button>
+            <button 
+              className={`nav-link ${activeTab === 'inventory' ? 'active' : ''}`} 
+              onClick={() => onTabChange('inventory')}
+              style={activeTab === 'inventory' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <Package size={18} /> Inventory List
+            </button>
+            <button 
+              className={`nav-link ${activeTab === 'procurement' ? 'active' : ''}`} 
+              onClick={() => onTabChange('procurement')}
+              style={activeTab === 'procurement' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <Truck size={18} /> Procurement Track
+            </button>
+            <button 
+              className={`nav-link ${activeTab === 'suppliers' ? 'active' : ''}`} 
+              onClick={() => onTabChange('suppliers')}
+              style={activeTab === 'suppliers' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <Users size={18} /> Supplier Hub
+            </button>
+            <button 
+              className={`nav-link ${activeTab === 'ai' ? 'active' : ''}`} 
+              onClick={() => onTabChange('ai')}
+              style={activeTab === 'ai' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <Activity size={18} /> AI & Simulation
+            </button>
+            <button 
+              className={`nav-link ${activeTab === 'analytics' ? 'active' : ''}`} 
+              onClick={() => onTabChange('analytics')}
+              style={activeTab === 'analytics' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <BarChart3 size={18} /> Analytics
+            </button>
+          </div>
         )}
         
         {role === 'supplier' && (
-          <NavLink 
-            to="/supplier" 
-            className={({isActive}) => isActive ? "nav-link active" : "nav-link"} 
-            style={({isActive}) => isActive ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)' } : { color: '#94a3b8' }}
-          >
-            <Zap size={18} /> Operation Control
-          </NavLink>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <button 
+              className={`nav-link ${activeTab === 'overview' ? 'active' : ''}`} 
+              onClick={() => onTabChange('overview')}
+              style={activeTab === 'overview' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <Zap size={18} /> Overview
+            </button>
+            <button 
+              className={`nav-link ${activeTab === 'inventory' ? 'active' : ''}`} 
+              onClick={() => onTabChange('inventory')}
+              style={activeTab === 'inventory' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <Package size={18} /> Inventory & Supply
+            </button>
+            <button 
+              className={`nav-link ${activeTab === 'analytics' ? 'active' : ''}`} 
+              onClick={() => onTabChange('analytics')}
+              style={activeTab === 'analytics' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <Activity size={18} /> Production Analytics
+            </button>
+            <button 
+              className={`nav-link ${activeTab === 'intelligence' ? 'active' : ''}`} 
+              onClick={() => onTabChange('intelligence')}
+              style={activeTab === 'intelligence' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <Bell size={18} /> Intelligence & Alerts
+            </button>
+          </div>
         )}
 
         {role === 'admin' && (
@@ -68,21 +141,7 @@ export const Sidebar = ({ role }) => {
           </NavLink>
         )}
 
-        <NavLink to="#" className="nav-link" style={{ color: '#94a3b8' }}>
-          <Truck size={18} /> Logistics Flow
-        </NavLink>
-        
-        <NavLink to="#" className="nav-link" style={{ color: '#94a3b8' }}>
-          <Package size={18} /> Node Inventory
-        </NavLink>
 
-        <NavLink to="#" className="nav-link" style={{ color: '#94a3b8' }}>
-          <Users size={18} /> Supplier Mesh
-        </NavLink>
-
-        <NavLink to="#" className="nav-link" style={{ color: '#94a3b8' }}>
-          <FileText size={18} /> Risk Reports
-        </NavLink>
       </nav>
 
       <div style={{ padding: '1.5rem', marginTop: 'auto', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
