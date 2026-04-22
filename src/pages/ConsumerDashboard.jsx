@@ -16,6 +16,21 @@ const trendData = [{ name: 'Week 1', score: 80 }, { name: 'Week 2', score: 85 },
 export const ConsumerDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
 
+  // Product Request State
+  const [requestedProducts, setRequestedProducts] = useState([]);
+  const [reqName, setReqName] = useState('');
+  const [reqQty, setReqQty] = useState('');
+  const [reqTime, setReqTime] = useState('Standard (14 Days)');
+
+  const handleAddRequest = (e) => {
+    e.preventDefault();
+    if (!reqName || !reqQty) return;
+    setRequestedProducts([{ id: Date.now(), name: reqName, quantity: reqQty, timeline: reqTime }, ...requestedProducts]);
+    setReqName('');
+    setReqQty('');
+    setReqTime('Standard (14 Days)');
+  };
+
   return (
     <div className="layout-app">
       <Sidebar role="consumer" activeTab={activeTab} onTabChange={setActiveTab} />
@@ -24,6 +39,115 @@ export const ConsumerDashboard = () => {
         <main className="layout-content">
           
           <div className="grid-main" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+
+            {activeTab === 'request' && (
+              <div className="grid-main grid-cols-2" style={{ gridTemplateColumns: '1fr 1.5fr' }}>
+                 
+                 {/* Product Request Form */}
+                 <div className="card-flat" style={{ height: 'fit-content' }}>
+                    <h3 className="h-section" style={{ marginBottom: '1.5rem' }}>Product Requisition</h3>
+                    <form onSubmit={handleAddRequest} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Product Name</label>
+                            <input 
+                                type="text" 
+                                value={reqName}
+                                onChange={(e) => setReqName(e.target.value)}
+                                placeholder="e.g. Industrial Steel" 
+                                style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid var(--border-light)', backgroundColor: 'var(--bg-secondary)', fontSize: '14px', outline: 'none' }}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Quantity Needed</label>
+                            <input 
+                                type="number" 
+                                value={reqQty}
+                                onChange={(e) => setReqQty(e.target.value)}
+                                placeholder="e.g. 500" 
+                                style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid var(--border-light)', backgroundColor: 'var(--bg-secondary)', fontSize: '14px', outline: 'none' }}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>Delivery Timeline</label>
+                            <select 
+                                value={reqTime}
+                                onChange={(e) => setReqTime(e.target.value)}
+                                style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid var(--border-light)', backgroundColor: 'var(--bg-secondary)', fontSize: '14px', outline: 'none', cursor: 'pointer' }}
+                            >
+                                <option value="Standard (14 Days)">Standard (14 Days)</option>
+                                <option value="Fast (7 Days)">Fast (7 Days)</option>
+                                <option value="Urgent (3 Days)">Urgent (3 Days)</option>
+                            </select>
+                        </div>
+                        <Button variant="primary" style={{ marginTop: '0.5rem', width: '100%' }} type="submit">Analyze Suppliers</Button>
+                    </form>
+                 </div>
+
+                 {/* Supplier Recommendations */}
+                 <div className="card-flat">
+                    <h3 className="h-section" style={{ marginBottom: '1.5rem' }}>AI Supplier Recommendations</h3>
+                    {requestedProducts.length === 0 ? (
+                        <div style={{ padding: '4rem 2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                            <div style={{ marginBottom: '1rem', fontSize: '32px' }}>🤖</div>
+                            <div style={{ fontSize: '15px', fontWeight: 700, marginBottom: '8px' }}>Waiting for request input...</div>
+                            <div style={{ fontSize: '13px' }}>Submit a product requisition to instantly generate AI-matched supplier options.</div>
+                        </div>
+                    ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                            {requestedProducts.map(prod => (
+                                <div key={prod.id} style={{ border: '1px solid var(--border-light)', borderRadius: '10px', padding: '1.25rem', backgroundColor: '#fff' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid var(--border-light)', paddingBottom: '0.75rem' }}>
+                                        <div>
+                                            <span style={{ fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)' }}>{prod.name}</span>
+                                            <span style={{ color: 'var(--text-secondary)', fontWeight: 600, fontSize: '13px', marginLeft: '8px' }}>Qty: {prod.quantity}</span>
+                                        </div>
+                                        <div style={{ fontSize: '11px', padding: '4px 8px', borderRadius: '4px', backgroundColor: 'var(--bg-secondary)', fontWeight: 700, color: 'var(--text-secondary)' }}>
+                                            {prod.timeline}
+                                        </div>
+                                    </div>
+                                    <table className="table-dense" style={{ margin: 0 }}>
+                                        <thead>
+                                            <tr>
+                                                <th>Supplier Name</th>
+                                                <th>Est. Cost</th>
+                                                <th>Time</th>
+                                                <th>AI Match</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr style={{ backgroundColor: '#f0fdf4' }}>
+                                                <td style={{ fontWeight: 700 }}>Apex Metals</td>
+                                                <td style={{ fontWeight: 600 }}>₹{(prod.quantity * 1050).toLocaleString()}</td>
+                                                <td style={{ fontWeight: 600 }}>12d</td>
+                                                <td><span style={{ color: '#16a34a', fontWeight: 800 }}>98% (Best)</span></td>
+                                                <td><Button variant="primary" style={{ padding: '4px 12px', fontSize: '11px', backgroundColor: 'var(--color-emerald)' }}>Approve</Button></td>
+                                            </tr>
+                                            <tr>
+                                                <td style={{ fontWeight: 600 }}>Titanium Corp</td>
+                                                <td>₹{(prod.quantity * 1200).toLocaleString()}</td>
+                                                <td>8d</td>
+                                                <td><span style={{ color: 'var(--color-emerald)', fontWeight: 700 }}>85%</span></td>
+                                                <td><Button variant="ghost" style={{ padding: '4px 12px', fontSize: '11px' }}>Approve</Button></td>
+                                            </tr>
+                                            <tr>
+                                                <td style={{ fontWeight: 600 }}>GlobalTech</td>
+                                                <td>₹{(prod.quantity * 800).toLocaleString()}</td>
+                                                <td>25d</td>
+                                                <td><span style={{ color: '#d97706', fontWeight: 700 }}>60%</span></td>
+                                                <td><Button variant="ghost" style={{ padding: '4px 12px', fontSize: '11px' }}>Approve</Button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                 </div>
+              </div>
+            )}
           
             {activeTab === 'overview' && (
               <>

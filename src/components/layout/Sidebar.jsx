@@ -11,7 +11,8 @@ import {
   Target,
   Activity,
   BarChart3,
-  Database
+  Database,
+  ShoppingCart
 } from 'lucide-react';
 import './layout.css';
 
@@ -70,6 +71,13 @@ export const Sidebar = ({ role, activeTab, onTabChange }) => {
               style={activeTab === 'data' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
             >
               <Database size={18} /> Data Management
+            </button>
+            <button 
+              className={`nav-link ${activeTab === 'request' ? 'active' : ''}`} 
+              onClick={() => onTabChange('request')}
+              style={activeTab === 'request' ? { color: accentColor, backgroundColor: 'rgba(255, 255, 255, 0.05)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600 } : { color: '#94a3b8', width: '100%', textAlign: 'left', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: '14px', fontWeight: 500 }}
+            >
+              <ShoppingCart size={18} /> Request Products
             </button>
           </div>
         )}
