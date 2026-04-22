@@ -6,7 +6,7 @@ import { Button } from '../components/ui/Button';
 import { 
   Package, ShieldCheck, Activity, Share2, Database, Network, 
   Target, AlertTriangle, Clock, BarChart3, UploadCloud, Bell, CheckCircle2, TrendingUp, DollarSign,
-  PlusCircle, Trash2, Edit3, XCircle, Users, Truck, Info, Globe, AlertCircle
+  PlusCircle, Trash2, Edit3, XCircle, Users, Truck, Info, Globe, AlertCircle, Search
 } from 'lucide-react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { GlobalSimulation } from '../components/simulation/GlobalSimulation';
@@ -19,11 +19,13 @@ export const ConsumerDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedRiskSupplier, setSelectedRiskSupplier] = useState(null);
 
-  // Product Request / Inventory State
+  // Expanded Product / Order State
   const [requestedProducts, setRequestedProducts] = useState([
-    { id: 1, name: 'Industrial Steel', quantity: 400, timeline: '12 Days', supplier: 'Titanium Corp', status: 'In Transit', shippingCost: 4000 },
-    { id: 2, name: 'Circuit Boards', quantity: 12000, timeline: '24 Days', supplier: 'TechFlow', status: 'Delayed', shippingCost: 1200 },
-    { id: 3, name: 'Polymer Casing', quantity: 8500, timeline: '5 Days', supplier: 'PolyMat Inc', status: 'Delivered', shippingCost: 850 },
+    { id: 1, name: 'Industrial Steel (Grade A)', quantity: 400, timeline: '12 Days', supplier: 'Titanium Corp', status: 'In Transit', shippingCost: 4000, progress: 65 },
+    { id: 2, name: 'Advanced Circuit Boards', quantity: 12000, timeline: '24 Days', supplier: 'TechFlow', status: 'Delayed', shippingCost: 1200, progress: 30 },
+    { id: 3, name: 'Polymer Casing L-4', quantity: 8500, timeline: '5 Days', supplier: 'PolyMat Inc', status: 'Delivered', shippingCost: 850, progress: 100 },
+    { id: 4, name: 'Copper Wiring (High Cap)', quantity: 2500, timeline: '15 Days', supplier: 'Apex Metals', status: 'Ordered', shippingCost: 2100, progress: 10 },
+    { id: 5, name: 'Silicon Wafers', quantity: 3000, timeline: '30 Days', supplier: 'GlobalTech', status: 'Processing', shippingCost: 5600, progress: 20 },
   ]);
 
   const [reqName, setReqName] = useState('');
@@ -38,9 +40,10 @@ export const ConsumerDashboard = () => {
         name: reqName,
         quantity: parseInt(reqQty),
         timeline: reqTime,
-        supplier: 'Awaiting Selection',
+        supplier: 'Awaiting AI Selection',
         status: 'Pending',
-        shippingCost: 0
+        shippingCost: 0,
+        progress: 0
     };
     setRequestedProducts([newProduct, ...requestedProducts]);
     setReqName('');
@@ -74,7 +77,7 @@ export const ConsumerDashboard = () => {
     <div className="layout-app">
       <Sidebar role="consumer" activeTab={activeTab} onTabChange={setActiveTab} />
       <div className="layout-main">
-        <Header title="Consumer Intelligence" userName="Procurement Lead" />
+        <Header title="GlobalChain Intelligence" userName="Procurement Lead" />
         <main className="layout-content">
           
           <div className="grid-main" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -85,12 +88,13 @@ export const ConsumerDashboard = () => {
                     <div className="card-flat" style={{ border: '2px solid var(--color-emerald)', backgroundColor: '#f0fdf4', display: 'flex', flexDirection: 'column', height: '100%' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
                             <Target size={24} color="var(--color-emerald)" />
-                            <h2 className="h-section" style={{ color: 'var(--color-emerald)', marginBottom: 0 }}>Recommended Plan</h2>
+                            <h2 className="h-section" style={{ color: '#065f46', marginBottom: 0 }}>Active Optimization Plan</h2>
                         </div>
                         <div style={{ flex: 1 }}>
                             <ul style={{ listStyleType: 'none', padding: 0, margin: '0 0 1.5rem 0', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '15px', fontWeight: 600 }}>
-                                <li style={{ display: 'flex', gap: '8px' }}><CheckCircle2 size={18} /> Supplier A for Steel → Lowest shipping cost</li>
-                                <li style={{ display: 'flex', gap: '8px' }}><CheckCircle2 size={18} /> Supplier B for Plastic → Fastest delivery</li>
+                                <li style={{ display: 'flex', gap: '8px' }}><CheckCircle2 size={18} color="#10b981" /> Consolidate Steel orders to Apex Metals</li>
+                                <li style={{ display: 'flex', gap: '8px' }}><CheckCircle2 size={18} color="#10b981" /> Diversify Electronics from TechFlow Hub</li>
+                                <li style={{ display: 'flex', gap: '8px' }}><CheckCircle2 size={18} color="#10b981" /> Activate Reserve Port in Rotterdam</li>
                             </ul>
                             <div style={{ padding: '1rem', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #d1fae5' }}>
                                 <div style={{ fontSize: '11px', fontWeight: 800, color: '#059669', marginBottom: '4px' }}>AI OPTIMIZATION NOTE</div>
@@ -99,8 +103,8 @@ export const ConsumerDashboard = () => {
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', borderTop: '1px solid #d1fae5', paddingTop: '1rem' }}>
                             <div>
-                                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase' }}>Est. Monthly Savings</div>
-                                <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--color-emerald)' }}>₹45,000</div>
+                                <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Est. Monthly Savings</div>
+                                <div style={{ fontSize: '24px', fontWeight: 800, color: '#059669' }}>₹45,000</div>
                             </div>
                             <Button variant="primary" style={{ backgroundColor: '#10b981' }}>Apply AI Plan</Button>
                         </div>
@@ -108,36 +112,36 @@ export const ConsumerDashboard = () => {
 
                     <div className="card-flat">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem' }}>
-                            <Activity size={20} color="var(--color-emerald)" />
-                            <h3 className="h-section" style={{ marginBottom: 0 }}>AI Procurement Recommendations</h3>
+                            <Activity size={20} color="var(--color-signal)" />
+                            <h3 className="h-section" style={{ marginBottom: 0 }}>Smart Sourcing Engine</h3>
                         </div>
                         <table className="table-dense">
                             <thead>
                                 <tr>
-                                    <th>Item</th>
-                                    <th>Optimal Supplier</th>
-                                    <th>Ship Cost</th>
-                                    <th>Risk Factor</th>
+                                    <th>SKU Group</th>
+                                    <th>Optimal Source</th>
+                                    <th>Ship Cost (Unit)</th>
+                                    <th>Reliability</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td style={{ fontWeight: 600 }}>Industrial Steel</td>
+                                    <td style={{ fontWeight: 600 }}>Raw Metals</td>
                                     <td>Apex Metals</td>
-                                    <td>₹4,000</td>
-                                    <td><span style={{ color: '#16a34a', fontWeight: 700 }}>LOW</span></td>
+                                    <td>₹14.20</td>
+                                    <td><span style={{ color: '#16a34a', fontWeight: 700 }}>98%</span></td>
                                 </tr>
                                 <tr>
-                                    <td style={{ fontWeight: 600 }}>Circuit Boards</td>
+                                    <td style={{ fontWeight: 600 }}>Semiconductors</td>
                                     <td>GlobalTech</td>
-                                    <td>₹1,100</td>
-                                    <td><span style={{ color: '#d97706', fontWeight: 700 }}>MEDIUM</span></td>
+                                    <td>₹8.40</td>
+                                    <td><span style={{ color: '#d97706', fontWeight: 700 }}>82%</span></td>
                                 </tr>
                                 <tr>
-                                    <td style={{ fontWeight: 600 }}>Polymer</td>
+                                    <td style={{ fontWeight: 600 }}>Poly-Resins</td>
                                     <td>PolyMat Inc</td>
-                                    <td>₹850</td>
-                                    <td><span style={{ color: '#16a34a', fontWeight: 700 }}>LOW</span></td>
+                                    <td>₹5.10</td>
+                                    <td><span style={{ color: '#16a34a', fontWeight: 700 }}>99%</span></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -158,7 +162,7 @@ export const ConsumerDashboard = () => {
                  <div className="card-flat" style={{ height: 'fit-content' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem' }}>
                         <PlusCircle size={20} color="var(--color-signal)" />
-                        <h3 className="h-section" style={{ marginBottom: 0 }}>Manual Entry</h3>
+                        <h3 className="h-section" style={{ marginBottom: 0 }}>Manual Requisition</h3>
                     </div>
                     <form onSubmit={handleAddRequest} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                         <div>
@@ -202,15 +206,15 @@ export const ConsumerDashboard = () => {
                  <div className="card-flat" style={{ height: 'fit-content' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem' }}>
                         <UploadCloud size={20} color="var(--color-emerald)" />
-                        <h3 className="h-section" style={{ marginBottom: 0 }}>Bulk Import</h3>
+                        <h3 className="h-section" style={{ marginBottom: 0 }}>Bulk Manifest Upload</h3>
                     </div>
                     <div 
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={(e) => {
                             e.preventDefault();
                             const bulkItems = [
-                                { id: Date.now(), name: 'Copper Wiring', quantity: 5000, timeline: 'Fast (7 Days)', supplier: 'Awaiting Selection', status: 'Pending', shippingCost: 0 },
-                                { id: Date.now() + 1, name: 'Glass Panes', quantity: 200, timeline: 'Standard (14 Days)', supplier: 'Awaiting Selection', status: 'Pending', shippingCost: 0 }
+                                { id: Date.now(), name: 'Copper Wiring', quantity: 5000, timeline: 'Fast (7 Days)', supplier: 'Awaiting Selection', status: 'Pending', shippingCost: 0, progress: 0 },
+                                { id: Date.now() + 1, name: 'Glass Panes', quantity: 200, timeline: 'Standard (14 Days)', supplier: 'Awaiting Selection', status: 'Pending', shippingCost: 0, progress: 0 }
                             ];
                             setRequestedProducts([...bulkItems, ...requestedProducts]);
                         }}
@@ -225,10 +229,10 @@ export const ConsumerDashboard = () => {
                                 <Database size={24} color="var(--color-emerald)" />
                             </div>
                             <div>
-                                <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>Drag & Drop CSV</div>
-                                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Fast enter products and suppliers list</div>
+                                <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>Drop Requisition CSV</div>
+                                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Automated product & supplier parsing</div>
                             </div>
-                            <Button variant="ghost" style={{ fontSize: '11px', border: '1px solid var(--border-light)' }}>Browse Files</Button>
+                            <Button variant="ghost" style={{ fontSize: '11px', border: '1px solid var(--border-light)' }}>Browse Workspace</Button>
                         </div>
                     </div>
                  </div>
@@ -238,16 +242,16 @@ export const ConsumerDashboard = () => {
             {activeTab === 'inventory' && (
               <div className="card-flat">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                    <h3 className="h-section">Inventory Management</h3>
-                    <Button variant="ghost" onClick={() => setActiveTab('request')} style={{ fontSize: '12px', gap: '6px' }}><PlusCircle size={14} /> Add Product</Button>
+                    <h3 className="h-section">Local Stock Control</h3>
+                    <Button variant="ghost" onClick={() => setActiveTab('request')} style={{ fontSize: '12px', gap: '6px' }}><PlusCircle size={14} /> Add SKU</Button>
                 </div>
                 <table className="table-dense">
                     <thead>
                         <tr>
-                            <th>Product</th>
+                            <th>SKU Name</th>
                             <th>Quantity</th>
-                            <th>Delivery Time</th>
-                            <th>Supplier</th>
+                            <th>Lead Time</th>
+                            <th>Source</th>
                             <th>Status</th>
                             <th style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
@@ -278,6 +282,63 @@ export const ConsumerDashboard = () => {
                         ))}
                     </tbody>
                 </table>
+              </div>
+            )}
+
+            {activeTab === 'procurement' && (
+              <div className="card-flat">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                    <div>
+                        <h3 className="h-section" style={{ marginBottom: '4px' }}>Live Procurement Track</h3>
+                        <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Real-time monitoring of all active inbound shipments</p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        <Button variant="ghost" style={{ fontSize: '11px' }}><Filter size={14} /> Filter</Button>
+                        <Button variant="ghost" style={{ fontSize: '11px' }}><Search size={14} /> Search</Button>
+                    </div>
+                </div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {requestedProducts.map(prod => (
+                        <div key={prod.id} style={{ padding: '1.5rem', border: '1px solid var(--border-light)', borderRadius: '12px', backgroundColor: 'var(--bg-secondary)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                                <div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <Truck size={18} color="var(--color-signal)" />
+                                        <span style={{ fontWeight: 800, fontSize: '15px' }}>{prod.name}</span>
+                                        <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', backgroundColor: '#e2e8f0', padding: '2px 8px', borderRadius: '4px' }}>#{prod.id}</span>
+                                    </div>
+                                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>Supplier: {prod.supplier} • Qty: {prod.quantity.toLocaleString()}</div>
+                                </div>
+                                <div style={{ textAlign: 'right' }}>
+                                    <div style={{ fontSize: '14px', fontWeight: 800, color: 'var(--color-signal)' }}>₹{prod.shippingCost.toLocaleString()}</div>
+                                    <div style={{ fontSize: '11px', fontWeight: 700, color: prod.status === 'Delayed' ? 'var(--color-alert)' : '#10b981', marginTop: '4px' }}>{prod.status.toUpperCase()}</div>
+                                </div>
+                            </div>
+                            
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <div style={{ flex: 1, height: '8px', backgroundColor: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                                    <div style={{ height: '100%', width: `${prod.progress}%`, backgroundColor: prod.status === 'Delayed' ? 'var(--color-alert)' : 'var(--color-signal)', transition: 'width 1s ease-in-out' }}></div>
+                                </div>
+                                <span style={{ fontSize: '12px', fontWeight: 800, minWidth: '40px' }}>{prod.progress}%</span>
+                            </div>
+                            
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-light)' }}>
+                                <div style={{ display: 'flex', gap: '1.5rem' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <Clock size={14} color="#64748b" />
+                                        <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b' }}>ETA: {prod.timeline}</span>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <ShieldCheck size={14} color="#10b981" />
+                                        <span style={{ fontSize: '11px', fontWeight: 700, color: '#10b981' }}>Insured</span>
+                                    </div>
+                                </div>
+                                <button style={{ border: 'none', background: 'none', color: 'var(--color-signal)', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}>VIEW FULL TRACKING →</button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
               </div>
             )}
 
